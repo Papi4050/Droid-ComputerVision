@@ -38,6 +38,21 @@ For SyRen Simple Serial Set Switchs 2 & 4 Down, All Others Up
 Placed a 10K ohm resistor between S1 & GND on the SyRen 10 itself
 
 */
+//****************************Michael Hirsch Code for Computer Vision*****************************
+
+#define numOfValsRec 2
+#define digitsPerValRec 3
+
+int valsRec[numOfValsRec];
+int stringLength = numOfValsRec*digitsPerValRec + 1;
+int counter = 0;
+bool counterStart = 0;
+String receivedString;
+
+
+
+
+
 
 // ************************** Options, Configurations, and Settings ***********************************
 
@@ -170,6 +185,11 @@ USB Usb;
 XBOXRECV Xbox(&Usb);
 
 void setup() {
+    
+//*******MIke Addition**********************//
+    pinMode(13,OUTPUT);
+//*******MIke Addition**********************//
+
   Serial1.begin(SABERTOOTHBAUDRATE);
   Serial2.begin(DOMEBAUDRATE);
 
@@ -576,6 +596,40 @@ void loop() {
 
   Syren10.motor(1, domeThrottle);
 } // END loop()
+
+
+//*********************************Mike Addition**************//
+void receiveData()
+{
+    while(Serial.available()){
+    
+    char c = Serial.read();
+    
+        if (c=='$'){
+            counterStart = true;
+        }
+        if (counterStart){
+            if (counter < stringLength){
+            receivedString = String(receivedString + c);
+            counter ++;
+            }
+        if (counter >= stringLength){
+            
+            for (int i = 0; i< numOfValsRec; i++)
+            {
+            int num = (i*digitsPerValRec)+ 1;
+            valsRec[0] = receivedString.substring(num,num+digitsPerValRec).toInt();
+            }
+            receivedString = "";
+            counter = 0;
+            counterStart = false;
+        }
+        }
+    }
+}
+
+//*********************************Mike Addition**************//
+
 
 void triggerI2C(byte deviceID, byte eventID) {
   Wire.beginTransmission(deviceID);
