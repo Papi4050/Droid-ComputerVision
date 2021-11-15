@@ -39,9 +39,13 @@ Placed a 10K ohm resistor between S1 & GND on the SyRen 10 itself
 
 */
 //****************************Michael Hirsch Code for Computer Vision*****************************
+//this section defines the number of values we will receive from the jetson.  These values will
+//eventually determine if the robot needs to turn the head left or rigt, rotate left or right, 
+//or move forward or backward
 
 #define numOfValsRec 2
 #define digitsPerValRec 3
+#define CVI2CPin 13
 
 int valsRec[numOfValsRec];
 int stringLength = numOfValsRec*digitsPerValRec + 1;
@@ -49,10 +53,8 @@ int counter = 0;
 bool counterStart = 0;
 String receivedString;
 
-
-
-
-
+//this is the baudrate we will operate at for this
+const int CVBAUDRATE 19200
 
 // ************************** Options, Configurations, and Settings ***********************************
 
@@ -178,8 +180,6 @@ ButtonEnum hpLightToggleButton;
 
 boolean isHPOn = false;
 
-
-
 MP3Trigger mp3Trigger;
 USB Usb;
 XBOXRECV Xbox(&Usb);
@@ -187,7 +187,9 @@ XBOXRECV Xbox(&Usb);
 void setup() {
     
 //*******MIke Addition**********************//
+//this defines what pin we are receiving info from and starts our serial connection
     pinMode(13,OUTPUT);
+    Serial3.begin(CVBAUDRATE);
 //*******MIke Addition**********************//
 
   Serial1.begin(SABERTOOTHBAUDRATE);
@@ -213,7 +215,6 @@ void setup() {
   // mixes the two together to get diff-drive power levels for both motors.
   Sabertooth2x.drive(0);
   Sabertooth2x.turn(0);
-
 
   Sabertooth2x.setTimeout(950);
   Syren10.setTimeout(950);
@@ -253,8 +254,63 @@ void setup() {
   //Serial.print(F("\r\nXbox Wireless Receiver Library Started"));
 }
 
+//*********************************Mike Addition**************//
+// this function will scan through serial messages received.  When it  starts with a $
+//it will parse the number into the respective values
+void receiveData()
+{
+    while(Serial3.available()){
+    
+    char c = Serial3.read();
+    
+        if (c=='$'){
+            counterStart = true;
+        }
+        if (counterStart){
+            if (counter < stringLength){
+            receivedString = String(receivedString + c);
+            counter ++;
+            }
+        if (counter >= stringLength){
+            
+            for (int i = 0; i< numOfValsRec; i++)
+            {
+            int num = (i*digitsPerValRec)+ 1;
+            valsRec[0] = receivedString.substring(num,num+digitsPerValRec).toInt();
+            }
+            receivedString = "";
+            counter = 0;
+            counterStart = false;
+        }
+        }
+    }
+}
+
+//*********************************Mike Addition**************//
 
 void loop() {
+    
+    
+//*********************************Mike Addition**************//
+//This section receivess data from our jetson Nano. Right now we
+//are in the testing phase so if we receive a value, this lights
+//an led to signal 
+    
+//this receive data function will parse our serial commands into
+//numbers
+    receiveData();
+    
+//if we receive a specific number, it will light the led
+//this will turn into movement commands in the near future.
+    if (valsRec[0] == 27){
+    digitalWrite(CVI2CPin, HIGH);
+    }
+    else {
+    digitalWrite(CVI2CPin, LOW);
+    }
+//*********************************Mike Addition**************//
+
+    
   Usb.Task();
   // if we're not connected, return so we don't bother doing anything else.
   // set all movement to 0 so if we lose connection we don't have a runaway droid!
@@ -596,39 +652,6 @@ void loop() {
 
   Syren10.motor(1, domeThrottle);
 } // END loop()
-
-
-//*********************************Mike Addition**************//
-void receiveData()
-{
-    while(Serial.available()){
-    
-    char c = Serial.read();
-    
-        if (c=='$'){
-            counterStart = true;
-        }
-        if (counterStart){
-            if (counter < stringLength){
-            receivedString = String(receivedString + c);
-            counter ++;
-            }
-        if (counter >= stringLength){
-            
-            for (int i = 0; i< numOfValsRec; i++)
-            {
-            int num = (i*digitsPerValRec)+ 1;
-            valsRec[0] = receivedString.substring(num,num+digitsPerValRec).toInt();
-            }
-            receivedString = "";
-            counter = 0;
-            counterStart = false;
-        }
-        }
-    }
-}
-
-//*********************************Mike Addition**************//
 
 
 void triggerI2C(byte deviceID, byte eventID) {
