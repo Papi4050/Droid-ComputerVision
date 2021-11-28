@@ -70,10 +70,12 @@ def findCenter(imgObjects, objects):
 if running_on_jetson_nano():
     # Accessing the camera with OpenCV on a Jetson Nano requires gstreamer with a custom gstreamer source string
     cap = cv2.VideoCapture(get_jetson_gstreamer_source(), cv2.CAP_GSTREAMER)
+    print('Jetson Nano detected!')
 else:
     # Accessing the camera with OpenCV on a laptop just requires passing in the number of the webcam (usually 0)
     # Note: You can pass in a filename instead if you want to process a video file instead of a live camera stream
     cap = cv2.VideoCapture(0)
+    print('Running on laptop!')
 
 
 while True:
