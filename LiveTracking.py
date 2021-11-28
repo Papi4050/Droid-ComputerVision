@@ -2,12 +2,19 @@ import cv2
 import numpy as np
 import face_recognition
 import os
+import platform
 
 
 path = 'Images'
 images = []
 classNames = []
 myList = os.listdir(path)
+
+def running_on_jetson_nano():
+    # To make the same code work on a laptop or on a Jetson Nano, we'll detect when we are running on the Nano
+    # so that we can access the camera correctly in that case.
+    # On a normal Intel laptop, platform.machine() will be "x86_64" instead of "aarch64"
+    return platform.machine() == "aarch64"
 
 # Get name of faces in the folder
 for cl in myList:
@@ -47,7 +54,14 @@ def findCenter(imgObjects, objects):
 
 
 # Initialize webcam
-cap = cv2.VideoCapture(0)
+if running_on_jetson_nano():
+    # Accessing the camera with OpenCV on a Jetson Nano requires gstreamer with a custom gstreamer source string
+    cap = cv2.VideoCapture(get_jetson_gstreamer_source(), cv2.CAP_GSTREAMER)
+else:
+    # Accessing the camera with OpenCV on a laptop just requires passing in the number of the webcam (usually 0)
+    # Note: You can pass in a filename instead if you want to process a video file instead of a live camera stream
+    cap = cv2.VideoCapture(0)
+
 
 while True:
     success, img = cap.read()
