@@ -21,6 +21,13 @@ classNames = []
 myList = os.listdir(path)
 
 def running_on_jetson_nano():
+    '''
+    Returns
+    -------
+    platform: boolean
+        Returns 'True' if the current platform is AARCH64 based. 
+    '''
+
     # To make the same code work on a laptop or on a Jetson Nano, we'll detect when we are running on the Nano
     # so that we can access the camera correctly in that case.
     # On a normal Intel laptop, platform.machine() will be "x86_64" instead of "aarch64"
@@ -28,7 +35,8 @@ def running_on_jetson_nano():
 
 def get_jetson_gstreamer_source(capture_width=1280, capture_height=720, display_width=1280, display_height=720, framerate=60, flip_method=0):
     """
-    Return an OpenCV-compatible video source description that uses gstreamer to capture video from the camera on a Jetson Nano
+    Return an OpenCV-compatible video source description that uses gstreamer to capture 
+    video from the camera on a Jetson Nano.
     """
     return (
             f'nvarguscamerasrc ! video/x-raw(memory:NVMM), ' +
@@ -50,6 +58,17 @@ print(classNames)
 
 # Get all encodings from the faces in the folder
 def findEncodings(images):
+    '''
+    Parameters
+    ----------
+    images : photo files
+        The image that contains one or more faces
+
+    Returns
+    -------
+    encodeList: list
+        A list of 128-dimensional face encodings (one for each face in the image) 
+    '''
     encodeList = []
     for img in images:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -63,6 +82,24 @@ print('Encoding Complete')
 
 
 def findCenter(imgObjects, objects):
+    '''
+    Parameters
+    ----------
+    imgObjects : image file
+        Current frame seen by live-feed with known face
+
+    objects : list
+        A list of tuples of found face locations in css (top, right, bottom, left) order
+
+    Returns
+    -------
+    cx : float
+        Off-center information of knonwn face in x-direction 
+    cy : float
+        Off-center information of knonwn face in y-direction 
+    imgObjects : image file
+        Current frame seen by live-feed with known face including off-center information
+    '''
     cx, cy = -1, -1
     if len(objects) != 0:
         y1, x2, y2, x1 = objects
