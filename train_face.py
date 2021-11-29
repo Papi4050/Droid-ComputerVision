@@ -1,3 +1,12 @@
+'''
+This file is a collection of functions used to provide
+the image capturing mechanism required for recognizing faces in LiveTracking.py.
+
+This includes the creation of a standard folder in which the files will be saved in,
+and a protocol to collect a predetermined amount of pictures with a uniqueID.
+'''
+
+
 import os
 import cv2
 import time
