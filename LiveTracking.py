@@ -1,3 +1,13 @@
+'''
+This file is a collection of functions used
+to provide live tracking funcitonality.
+
+They include methods to configure the environment correctly, recognize faces, 
+and track those faces in a given live-feed. Additionally, the software will provide
+an accurate meassurement of the location of the face in the frame and display the 
+off-set.
+'''
+
 import cv2
 import numpy as np
 import face_recognition
