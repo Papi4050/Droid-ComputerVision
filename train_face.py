@@ -13,8 +13,6 @@ import os
 import cv2
 import time
 
-path = './Images'
-
 
 def createImageDir(path):
     '''
@@ -71,7 +69,10 @@ def captureFace(path):
             success = False
         time.sleep(1)
 
+def main():
+    path = './Images'
+    createImageDir(path)
+    captureFace(path)
 
-createImageDir(path)
-
-captureFace(path)
+if __name__ == "__main__":
+    main()  
