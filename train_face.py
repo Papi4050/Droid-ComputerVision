@@ -5,6 +5,12 @@ import time
 path = './Images'
 
 def createImageDir(path):
+    '''
+    Parameters
+    ----------
+    path : string
+        File path to the images folder
+    '''
     if os.path.isdir(path) is not True:
         os.makedirs(path)
         print("Dir created!")
@@ -12,6 +18,12 @@ def createImageDir(path):
         print("Dir already exist")
 
 def captureFace(path):
+    '''
+    Parameters
+    ----------
+    path : string
+        File path to the images folder
+    '''
     cap = cv2.VideoCapture(0)
     time.sleep(1)
 
