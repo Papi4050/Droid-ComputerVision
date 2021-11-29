@@ -48,14 +48,18 @@ def captureFace(path):
         images.append(curImg)
         faceNames.append(os.path.splitext(cl)[0])
 
-    faceNames.sort()
-    print(faceNames)
+    maxVal = []
+    for str in faceNames:
+        temp = str.split('-')[1]
+        maxVal.append(temp)
 
-    if not faceNames:
+    maxVal.sort(key=int)
+    print(maxVal)
+
+    if not maxVal:
         uniqueID = 0
     else:
-        temp = faceNames[-1].split('-')
-        uniqueID = int(temp[1]) + 1
+        uniqueID = int(maxVal[-1]) + 1
 
     success = True
     count = 0
