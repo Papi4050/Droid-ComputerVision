@@ -36,17 +36,19 @@ def running_on_jetson_nano():
     return platform.machine() == "aarch64"
 
 
-def get_jetson_gstreamer_source(capture_width=1280, capture_height=720, display_width=1280, display_height=720, framerate=60, flip_method=0):
+def get_jetson_gstreamer_source(capture_width=1280, capture_height=720,
+                                display_width=1280, display_height=720,
+                                framerate=60, flip_method=0):
     """
-    Return an OpenCV-compatible video source description that uses gstreamer to capture
-    video from the camera on a Jetson Nano.
+    Return an OpenCV-compatible video source description that uses gstreamer
+    to capture video from the camera on a Jetson Nano.
     """
     return (
             f'nvarguscamerasrc ! video/x-raw(memory:NVMM), ' +
             f'width=(int){capture_width}, height=(int){capture_height}, ' +
             f'format=(string)NV12, framerate=(fraction){framerate}/1 ! ' +
             f'nvvidconv flip-method={flip_method} ! ' +
-            f'video/x-raw, width=(int){display_width}, '+ 
+            f'video/x-raw, width=(int){display_width}, ' +
             f'height=(int){display_height}, format=(string)BGRx ! ' +
             'videoconvert ! video/x-raw, format=(string)BGR ! appsink'
             )
@@ -72,7 +74,8 @@ def findEncodings(images):
     Returns
     -------
     encodeList: list
-        A list of 128-dimensional face encodings (one for each face in the image)
+        A list of 128-dimensional face encodings (one for each face in
+        the image)
     '''
     encodeList = []
     for img in images:
@@ -94,7 +97,8 @@ def findCenter(imgObjects, objects):
         Current frame seen by live-feed with known face
 
     objects : list
-        A list of tuples of found face locations in css (top, right, bottom, left) order
+        A list of tuples of found face locations in css (top, right, bottom,
+        left) order
 
     Returns
     -------
@@ -103,18 +107,22 @@ def findCenter(imgObjects, objects):
     cy : float
         Off-center information of knonwn face in y-direction
     imgObjects : image file
-        Current frame seen by live-feed with known face including off-center information
+        Current frame seen by live-feed with known face including off-center
+        information
     '''
     cx, cy = -1, -1
     if len(objects) != 0:
         y1, x2, y2, x1 = objects
-        y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4  # Multiply by 4 to account for image scaling from above
+        # Multiply by 4 to account for image scaling from above
+        y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
         cx = x1 + ((x2-x1)/2)
         cy = y1 + ((y2-y1)/2)
         cv2.circle(imgObjects, (int(cx), int(cy)), 2, (0, 255, 0), cv2.FILLED)
         ih, iw, ic = imgObjects.shape
-        cv2.line(imgObjects, (int(iw//2), int(cy)), (int(cx), int(cy)), (0, 255, 0), 1)
-        cv2.line(imgObjects, (int(cx), int(ih//2)), (int(cx), int(cy)), (0, 255, 0), 1)
+        cv2.line(imgObjects, (int(iw//2), int(cy)), (int(cx), int(cy)),
+                 (0, 255, 0), 1)
+        cv2.line(imgObjects, (int(cx), int(ih//2)), (int(cx), int(cy)),
+                 (0, 255, 0), 1)
     return cx, cy, imgObjects
 
 
@@ -166,11 +174,13 @@ while True:
             # Draw identifier on image
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 255, 0), cv2.FILLED)
-            cv2.putText(img, name, (x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(img, name, (x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 1,
+                        (255, 255, 255), 2)
 
             h, w, c = img.shape
             cv2.line(img, (int(w/2), 0), (int(w//2), int(h)), (255, 0, 255), 1)
-            cv2.line(img, (0, int(h//2)), (int(w), int(h)//2), (255, 0, 255), 1)
+            cv2.line(img, (0, int(h//2)), (int(w), int(h)//2),
+                     (255, 0, 255), 1)
 
     cv2.imshow('Webcam', img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
