@@ -2,10 +2,10 @@
 This file is a collection of functions used
 to provide live tracking funcitonality.
 
-They include methods to configure the environment correctly, recognize faces, 
-and track those faces in a given live-feed. Additionally, the software will provide
-an accurate meassurement of the location of the face in the frame and display the 
-off-set.
+They include methods to configure the environment correctly, recognize faces,
+and track those faces in a given live-feed. Additionally, the software will
+provide an accurate meassurement of the location of the face in the frame
+and display the off-set.
 '''
 
 import cv2
@@ -20,22 +20,25 @@ images = []
 classNames = []
 myList = os.listdir(path)
 
+
 def running_on_jetson_nano():
     '''
     Returns
     -------
     platform: boolean
-        Returns 'True' if the current platform is AARCH64 based. 
+        Returns 'True' if the current platform is AARCH64 based.
     '''
 
-    # To make the same code work on a laptop or on a Jetson Nano, we'll detect when we are running on the Nano
-    # so that we can access the camera correctly in that case.
-    # On a normal Intel laptop, platform.machine() will be "x86_64" instead of "aarch64"
+    # To make the same code work on a laptop or on a Jetson Nano, we'll detect
+    # when we are running on the Nano so that we can access the camera
+    # correctly in that case. On a normal Intel laptop, platform.machine()
+    # will be "x86_64" instead of "aarch64"
     return platform.machine() == "aarch64"
+
 
 def get_jetson_gstreamer_source(capture_width=1280, capture_height=720, display_width=1280, display_height=720, framerate=60, flip_method=0):
     """
-    Return an OpenCV-compatible video source description that uses gstreamer to capture 
+    Return an OpenCV-compatible video source description that uses gstreamer to capture
     video from the camera on a Jetson Nano.
     """
     return (
@@ -46,6 +49,7 @@ def get_jetson_gstreamer_source(capture_width=1280, capture_height=720, display_
             f'video/x-raw, width=(int){display_width}, height=(int){display_height}, format=(string)BGRx ! ' +
             'videoconvert ! video/x-raw, format=(string)BGR ! appsink'
             )
+
 
 # Get name of faces in the folder
 for cl in myList:
@@ -67,7 +71,7 @@ def findEncodings(images):
     Returns
     -------
     encodeList: list
-        A list of 128-dimensional face encodings (one for each face in the image) 
+        A list of 128-dimensional face encodings (one for each face in the image)
     '''
     encodeList = []
     for img in images:
@@ -94,9 +98,9 @@ def findCenter(imgObjects, objects):
     Returns
     -------
     cx : float
-        Off-center information of knonwn face in x-direction 
+        Off-center information of knonwn face in x-direction
     cy : float
-        Off-center information of knonwn face in y-direction 
+        Off-center information of knonwn face in y-direction
     imgObjects : image file
         Current frame seen by live-feed with known face including off-center information
     '''
@@ -115,33 +119,45 @@ def findCenter(imgObjects, objects):
 
 # Initialize webcam
 if running_on_jetson_nano():
-    # Accessing the camera with OpenCV on a Jetson Nano requires gstreamer with a custom gstreamer source string
+    # Accessing the camera with OpenCV on a Jetson Nano requires gstreamer
+    # with a custom gstreamer source string
     cap = cv2.VideoCapture(get_jetson_gstreamer_source(), cv2.CAP_GSTREAMER)
     print('Jetson Nano detected!')
 else:
-    # Accessing the camera with OpenCV on a laptop just requires passing in the number of the webcam (usually 0)
-    # Note: You can pass in a filename instead if you want to process a video file instead of a live camera stream
+    # Accessing the camera with OpenCV on a laptop just requires passing in the
+    # number of the webcam (usually 0)
+    # Note: You can pass in a filename instead if you want to process a video
+    # file instead of a live camera stream
     cap = cv2.VideoCapture(0)
     print('Running on laptop!')
 
 
 while True:
     success, img = cap.read()
-    imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)  # Scale image to .25 optimize processing
+    # Scale image to .25 optimize processing
+    imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
     imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
 
-    facesCurFrame = face_recognition.face_locations(imgS)  # Get faces in current frame
-    encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)  # Encode faces in current frame
+    # Get faces in current frame
+    facesCurFrame = face_recognition.face_locations(imgS)
+    # Encode faces in current frame
+    encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
     for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
-        matches = face_recognition.compare_faces(encodeListKnown, encodeFace)  # Check current faces in frame for similarity
-        faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)  # Get distance for faces in current frame
-        matchIndex = np.argmin(faceDis)  # Will simply select the lowest match
+        # Check current faces in frame for similarity
+        matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
+        # Get distance for faces in current frame
+        faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
+        # Will simply select the lowest match
+        matchIndex = np.argmin(faceDis)
 
         if matches[matchIndex]:
-            name = classNames[matchIndex].upper()  # Match Name and convert to upper
-            y1, x2, y2, x1 = faceLoc  # Get location of faces in the frame (top, right, bottom, left)
-            y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4  # Multiply by 4 to account for image scaling from above
+            # Match Name and convert to upper
+            name = classNames[matchIndex].upper()
+            # Get location of faces in the frame (top, right, bottom, left)
+            y1, x2, y2, x1 = faceLoc
+            # Multiply by 4 to account for image scaling from above
+            y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
 
             cx, cy, img = findCenter(img, faceLoc)
             print(name)
