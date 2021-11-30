@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import sys
+import train_face as tf
 
 
 def input_parser():
@@ -72,6 +73,10 @@ def main():
     imagePath = config_args[0]
     portNo = config_args[1]
     baudRate = config_args[2]
+
+    if my_args.l == True:
+        tf.createImageDir(imagePath)
+        tf.captureFace(imagePath) 
 
     return 0 
 
