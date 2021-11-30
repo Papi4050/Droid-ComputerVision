@@ -28,12 +28,15 @@ def createImageDir(path):
         print("Dir already exist")
 
 
-def captureFace(path):
+def captureFace(path, name):
     '''
     Parameters
     ----------
     path : string
         File path to the images folder
+    
+    name : string
+        Contains the name of the person who is being saved
     '''
     cap = cv2.VideoCapture(0)
     time.sleep(1)
@@ -48,35 +51,41 @@ def captureFace(path):
         images.append(curImg)
         faceNames.append(os.path.splitext(cl)[0])
 
+    # Check if name already exists in the files, if name exists, add unique ID
     maxVal = []
+    print(faceNames)
     for str in faceNames:
-        temp = str.split('-')[1]
-        maxVal.append(temp)
+        temp = str.split('-')
+
+        if temp[0] == name:
+            maxVal.append(temp[1])
+            print(temp[1])
 
     maxVal.sort(key=int)
-    print(maxVal)
+    print(f'maxVal = {maxVal}')
 
     if not maxVal:
         uniqueID = 0
     else:
         uniqueID = int(maxVal[-1]) + 1
 
-    success = True
-    count = 0
-    while success:
-        success, image = cap.read()
-        cv2.imwrite(path + "/face-%d.png" % uniqueID, image)
-        print('Read a new frame: ', success)
-        count += 1
-        uniqueID += 1
-        if count == 10:
-            success = False
+    # Prepare for taking the photo
+    for countdown in range(5,0,-1):
+        print(f'Image will be taking in {countdown} seconds...')
         time.sleep(1)
+    
+    # Take the photo
+    success, image = cap.read()
+    final_path = f'{path}/{name}-{uniqueID}.png'
+    cv2.imwrite(final_path, image)
+    print('New Photo: ', success)
 
 def main():
     path = './Images'
+    name = 'JohnDoe'
+    
     createImageDir(path)
-    captureFace(path)
+    captureFace(path, name)
 
 if __name__ == "__main__":
     main()  
