@@ -2,6 +2,7 @@ import argparse
 import configparser
 import sys
 import train_face as tf
+import live_tracking
 
 
 def input_parser():
@@ -76,7 +77,9 @@ def main():
 
     if my_args.l == True:
         tf.createImageDir(imagePath)
-        tf.captureFace(imagePath) 
+        tf.captureFace(imagePath)
+    else:
+        live_tracking.main()
 
     return 0 
 
