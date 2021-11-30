@@ -20,6 +20,7 @@ def input_parser():
 
     my_parser.add_argument(
         '-l',
+        '--learn',
         action='store_true',
         help='Initiates learning mode for a new face',
         required=False
@@ -75,13 +76,13 @@ def main():
     portNo = config_args[1]
     baudRate = config_args[2]
 
-    if my_args.l == True:
+    if my_args.learn is True:
         tf.createImageDir(imagePath)
         tf.captureFace(imagePath)
     else:
         live_tracking.main()
 
-    return 0 
+    return 0
 
 
 if __name__ == "__main__":
