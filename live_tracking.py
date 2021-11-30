@@ -123,6 +123,12 @@ def estDistance(y1, x2, y2, x1, h, w):
     x1 : int
         Left point of face
 
+    h : int
+        Height of the original frame
+
+    w : int
+        Width of the original frame
+
     Returns
     -------
     dist : float
@@ -141,6 +147,7 @@ def estDistance(y1, x2, y2, x1, h, w):
     # This approach is chosen for now to scale distance
     # IS NOT ROBUST but works
     dist = (area_uncovered*22)/860096
+
     return dist
 
 def main():
