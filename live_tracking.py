@@ -106,6 +106,50 @@ def findCenter(imgObjects, objects):
                  (0, 255, 0), 1)
     return cx, cy, imgObjects
 
+
+def estDistance(y1, x2, y2, x1, h, w):
+    '''
+    Parameters
+    ----------
+    y1 : int
+        Top point of face
+    
+    x2 : int
+        Right point of face
+
+    y2 : int
+        Bottom point of face
+
+    x1 : int
+        Left point of face
+
+    h : int
+        Height of the original frame
+
+    w : int
+        Width of the original frame
+
+    Returns
+    -------
+    dist : float
+        Off-center information of knonwn face in x-direction
+    '''
+    orig_size = h*w
+
+    y_length = y2 - y1
+    x_length = x2 - x1 
+
+    area = y_length * x_length
+    area_uncovered = orig_size - area
+
+    # 22 = distance measured in inches during trial 
+    # 860096 = pixels covered at this specific distance
+    # This approach is chosen for now to scale distance
+    # IS NOT ROBUST but works
+    dist = (area_uncovered*22)/860096
+
+    return dist
+
 def main():
     path = 'Images'
     images = []
@@ -175,6 +219,7 @@ def main():
                             (255, 255, 255), 2)
 
                 h, w, c = img.shape
+                distance = estDistance(y1, x2, y2, x1, h, w)
                 cv2.line(img, (int(w/2), 0), (int(w//2), int(h)), (255, 0, 255), 1)
                 cv2.line(img, (0, int(h//2)), (int(w), int(h)//2),
                         (255, 0, 255), 1)
