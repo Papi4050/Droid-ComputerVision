@@ -35,3 +35,46 @@ def input_parser():
     counter_inputs = my_parser.parse_args()
 
     return counter_inputs
+
+
+def config_input():
+    """
+    This function imports all parameters from the config file.
+
+    Returns
+    -------
+    config_list : list
+        Returns a list that contains all the arguments from
+        the config file.
+    """
+
+    config_list = []
+
+    my_config = configparser.ConfigParser()
+    my_config.read("./droidvision_config.ini")
+
+    # PATH PARSING
+    imagePath = my_config['PATH']['image_path']
+
+    # CONNECTION
+    portNo = (my_config['CONNECTION']['port_no'])
+    baudRate = int(my_config['CONNECTION']['baud_rate'])
+
+    config_list = [imagePath, portNo, baudRate]
+
+    return config_list
+
+
+def main():
+    my_args = input_parser()
+
+    config_args = config_input()
+    imagePath = config_args[0]
+    portNo = config_args[1]
+    baudRate = config_args[2]
+
+    return 0 
+
+
+if __name__ == "__main__":
+    main()
