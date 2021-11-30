@@ -78,7 +78,7 @@ def main():
 
     if my_args.learn is True:
         tf.createImageDir(imagePath)
-        tf.captureFace(imagePath)
+        tf.captureFace(imagePath, my_args.name)
     else:
         live_tracking.main()
 
