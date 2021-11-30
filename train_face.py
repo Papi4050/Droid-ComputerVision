@@ -51,22 +51,30 @@ def captureFace(path, name):
         images.append(curImg)
         faceNames.append(os.path.splitext(cl)[0])
 
+    # Check if name already exists in the files, if name exists, add unique ID
     maxVal = []
+    print(faceNames)
     for str in faceNames:
-        temp = str.split('-')[1]
-        maxVal.append(temp)
+        temp = str.split('-')
+
+        if temp[0] == name:
+            maxVal.append(temp[1])
+            print(temp[1])
 
     maxVal.sort(key=int)
-    print(maxVal)
+    print(f'maxVal = {maxVal}')
 
     if not maxVal:
         uniqueID = 0
     else:
         uniqueID = int(maxVal[-1]) + 1
 
+    # Prepare for taking the photo
     for countdown in range(5,0,-1):
         print(f'Image will be taking in {countdown} seconds...')
         time.sleep(1)
+    
+    # Take the photo
     success, image = cap.read()
     final_path = f'{path}/{name}-{uniqueID}.png'
     cv2.imwrite(final_path, image)
