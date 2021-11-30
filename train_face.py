@@ -34,6 +34,9 @@ def captureFace(path, name):
     ----------
     path : string
         File path to the images folder
+    
+    name : string
+        Contains the name of the person who is being saved
     '''
     cap = cv2.VideoCapture(0)
     time.sleep(1)
