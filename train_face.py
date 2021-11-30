@@ -28,7 +28,7 @@ def createImageDir(path):
         print("Dir already exist")
 
 
-def captureFace(path):
+def captureFace(path, name):
     '''
     Parameters
     ----------
@@ -61,22 +61,20 @@ def captureFace(path):
     else:
         uniqueID = int(maxVal[-1]) + 1
 
-    success = True
-    count = 0
-    while success:
-        success, image = cap.read()
-        cv2.imwrite(path + "/face-%d.png" % uniqueID, image)
-        print('Read a new frame: ', success)
-        count += 1
-        uniqueID += 1
-        if count == 10:
-            success = False
+    for countdown in range(5,0,-1):
+        print(f'Image will be taking in {countdown} seconds...')
         time.sleep(1)
+    success, image = cap.read()
+    final_path = f'{path}/{name}-{uniqueID}.png'
+    cv2.imwrite(final_path, image)
+    print('New Photo: ', success)
 
 def main():
     path = './Images'
+    name = 'JohnDoe'
+    
     createImageDir(path)
-    captureFace(path)
+    captureFace(path, name)
 
 if __name__ == "__main__":
     main()  
