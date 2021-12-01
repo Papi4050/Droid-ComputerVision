@@ -1,7 +1,7 @@
 // =======================================================================================
 // /////////////////////////Padawan360 Body Code - Mega I2C v2.0 ////////////////////////////////////
 // =======================================================================================
-/*
+/
 by Dan Kraus
 dskraus@gmail.com
 Astromech: danomite4047
@@ -46,7 +46,7 @@ Placed a 10K ohm resistor between S1 & GND on the SyRen 10 itself
 int valsRec[numOfValsRec];
 int stringLength = numOfValsRec*digitsPerValRec + 1;
 int counter = 0;
-bool counterStart = 0;
+bool counterStart = false;
 String receivedString;
 int toggleCounter = 0;
 const int JetsonBaud = 2400;
@@ -339,12 +339,12 @@ void loop() {
   }
   }  
 receiveData();
-valsRec[0]=driveCommand;
-valsRec[1]=turnCommand;
+driveCommand= valsRec[0];
+turnCommand=valsRec[1];
 
  if (isInTrackingMode){
     
-    Serial.println (driveCommand);
+    Serial.println(driveCommand);
     delay(1000);
 
 //  while (valsRec[0] == 22){
