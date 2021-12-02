@@ -4,6 +4,7 @@ import sys
 import train_face as tf
 import live_tracking
 import manual_drive
+import com_module
 
 
 def input_parser():
@@ -84,6 +85,9 @@ def main():
     imagePath = config_args[0]
     portNo = config_args[1]
     baudRate = config_args[2]
+
+    # Connect to serial communication
+    com_module.initSerialConnection(portNo, baudRate)
 
     if my_args.learn is True:
         tf.createImageDir(imagePath)
