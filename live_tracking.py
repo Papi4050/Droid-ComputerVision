@@ -118,7 +118,7 @@ def estDistance(y1, x2, y2, x1, h, w):
 
     return dist
 
-def main():
+def main(ser):
     path = 'Images'
     images = []
     classNames = []
