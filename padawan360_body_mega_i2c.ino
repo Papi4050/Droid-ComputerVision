@@ -43,15 +43,15 @@ Placed a 10K ohm resistor between S1 & GND on the SyRen 10 itself
 #define numOfValsRec 2
 #define digitsPerValRec 3
 
-int valsRec[numOfValsRec];
+unsigned int valsRec[numOfValsRec];
 int stringLength = numOfValsRec*digitsPerValRec + 1;
 int counter = 0;
-bool counterStart = 0;
+bool counterStart = false;
 String receivedString;
-
-
-
-
+int toggleCounter = 0;
+const int JetsonBaud = 2400;
+int driveCommand = 0;
+int turnCommand = 0;
 
 
 // ************************** Options, Configurations, and Settings ***********************************
@@ -81,11 +81,11 @@ boolean isLeftStickDrive = true;
 // If using a speed controller for the dome, sets the top speed. You'll want to vary it potenitally
 // depending on your motor. My Pittman is really fast so I dial this down a ways from top speed.
 // Use a number up to 127 for serial
-const byte DOMESPEED = 110;
+const byte DOMESPEED = 120;
 
 // Ramping- the lower this number the longer R2 will take to speedup or slow down,
 // change this by incriments of 1
-const byte RAMPING = 5;
+const byte RAMPING = 3;
 
 // Compensation is for deadband/deadzone checking. There's a little play in the neutral zone
 // which gets a reading of a value of something other than 0 when you're not moving the stick.
@@ -107,7 +107,7 @@ const int SABERTOOTHBAUDRATE = 9600;
 // Set the baude rate for the Syren motor controller (dome)
 // for packetized options are: 2400, 9600, 19200 and 38400. I think you need to pick one that works
 // and I think it varies across different firmware versions.
-const int DOMEBAUDRATE = 2400;
+const int DOMEBAUDRATE = 9600;
 
 // Default sound volume at startup
 // 0 = full volume, 255 off
@@ -124,7 +124,7 @@ int turnDirection = 20;
 #define EXTINGUISHERPIN 3
 
 #include <Sabertooth.h>
-#include <MP3Trigger.h>
+//#include <Trigger.h>
 #include <Wire.h>
 #include <XBOXRECV.h>
 
@@ -145,6 +145,15 @@ boolean isDriveEnabled = false;
 // Automated functionality
 // Used as a boolean to turn on/off automated functions like periodic random sounds and periodic dome turns
 boolean isInAutomationMode = false;
+
+//Mike addition *********************************************
+boolean isInTrackingMode = false;
+unsigned long waitTime = 0;
+byte yourDelay = 5;
+byte trackingAction = 0;
+//Mike addition *********************************************
+
+
 unsigned long automateMillis = 0;
 // Action number used to randomly choose a sound effect or a dome turn
 byte automateAction = 0;
@@ -178,9 +187,7 @@ ButtonEnum hpLightToggleButton;
 
 boolean isHPOn = false;
 
-
-
-MP3Trigger mp3Trigger;
+//Trigger //;
 USB Usb;
 XBOXRECV Xbox(&Usb);
 
@@ -188,10 +195,12 @@ void setup() {
     
 //*******MIke Addition**********************//
     pinMode(13,OUTPUT);
+    int toggleCounter = 0;
 //*******MIke Addition**********************//
 
   Serial1.begin(SABERTOOTHBAUDRATE);
   Serial2.begin(DOMEBAUDRATE);
+  Serial.begin(JetsonBaud);
 
 #if defined(SYRENSIMPLE)
   Syren10.motor(0);
@@ -221,8 +230,8 @@ void setup() {
   pinMode(EXTINGUISHERPIN, OUTPUT);
   digitalWrite(EXTINGUISHERPIN, HIGH);
 
-  mp3Trigger.setup();
-  mp3Trigger.setVolume(vol);
+ // //.setup();
+ // //.setVolume(vol);
 
   if(isLeftStickDrive) {
     throttleAxis = LeftHatY;
@@ -239,7 +248,6 @@ void setup() {
     hpLightToggleButton = L3;
   }
 
-
  // Start I2C Bus. The body is the master.
   Wire.begin();
 
@@ -253,6 +261,35 @@ void setup() {
   //Serial.print(F("\r\nXbox Wireless Receiver Library Started"));
 }
 
+//*********************************Mike Addition**************//
+void receiveData()
+{
+    while(Serial.available()){
+    
+    char c = Serial.read();
+    
+        if (c=='$'){
+            counterStart = true;
+        }
+        if (counterStart){
+            if (counter < stringLength){
+            receivedString = String(receivedString + c);
+            counter ++;
+            }
+        if (counter >= stringLength){
+            
+            for (int i = 0; i< numOfValsRec; i++)
+            {
+            int num = (i*digitsPerValRec)+ 1;
+            valsRec[0] = receivedString.substring(num,num+digitsPerValRec).toInt();
+            }
+            receivedString = "";
+            counter = 0;
+            counterStart = false;
+        }
+        }
+    }
+}
 
 void loop() {
   Usb.Task();
@@ -270,7 +307,7 @@ void loop() {
   // After the controller connects, Blink all the LEDs so we know drives are disengaged at start
   if (!firstLoadOnConnect) {
     firstLoadOnConnect = true;
-    mp3Trigger.play(21);
+    ////.play(21);
     Xbox.setLedMode(ROTATING, 0);
   }
   
@@ -285,10 +322,10 @@ void loop() {
     if (isDriveEnabled) {
       isDriveEnabled = false;
       Xbox.setLedMode(ROTATING, 0);
-      mp3Trigger.play(53);
+     // //.play(53);
     } else {
       isDriveEnabled = true;
-      mp3Trigger.play(52);
+    //  //.play(52);
       // //When the drive is enabled, set our LED accordingly to indicate speed
       if (drivespeed == DRIVESPEED1) {
         Xbox.setLedOn(LED1, 0);
@@ -299,18 +336,72 @@ void loop() {
       }
     }
   }
+  //
+  //go between automation mode, tracking mode, and normal mode using the BACK button
 
+      
   //Toggle automation mode with the BACK button
   if (Xbox.getButtonClick(BACK, 0)) {
     if (isInAutomationMode) {
       isInAutomationMode = false;
       automateAction = 0;
-      mp3Trigger.play(53);
+     // //.play(53);
     } else {
       isInAutomationMode = true;
-      mp3Trigger.play(52);
+     // //.play(52);
     }
   }
+
+  //Toggle tracking mode with the 
+  if (Xbox.getButtonClick(Y, 0)) {
+    if (Xbox.getButtonPress(L1, 0)) {
+      ////.play(1);
+      if (isInTrackingMode) {
+        isInTrackingMode = false;
+        ////.play(53);
+    } else {
+      isInTrackingMode = true;
+     // //.play(1);
+    }
+  }
+  }  
+
+// tracking mode has started.  This will set the motors to zero and wait to receive serial commands
+ if (isInTrackingMode){
+  //Sabertooth2x.drive(0);
+  //Sabertooth2x.turn(0);
+  //if the value 111 is received in the second cluster, ie. $234111 this will engage the while loop that will drive it forard
+  //this while loop will disengage if a different value is received
+  while (valsRec[0] == 111){
+    Serial.println("movingforward");
+    Sabertooth2x.drive(25);
+    Sabertooth2x.turn(0);
+    receiveData();
+  }
+  //if the value 111 is received in the second cluster, ie. $222111 this will engage the while loop that will drive it forard
+  //this while loop will disengage if a different value is received
+  while (valsRec[0] == 222 ){
+    Serial.println("turnright");
+    Sabertooth2x.drive(0);
+    Sabertooth2x.turn(-30);
+    receiveData();
+  }
+    while (valsRec[0] == 333){
+    Serial.println("tunleft");
+    Sabertooth2x.drive(0);
+    Sabertooth2x.turn(30);
+    receiveData();
+  }
+  if (valsRec[0] != 111){
+    if (valsRec[0] != 222){
+      if (valsRec[0] != 333){
+          receiveData();
+          Serial.println("notdriving");
+      }
+    }
+  }
+}
+    
 
   // Plays random sounds or dome movements for automations when in automation mode
   if (isInAutomationMode) {
@@ -321,7 +412,7 @@ void loop() {
       automateAction = random(1, 5);
 
       if (automateAction > 1) {
-        mp3Trigger.play(random(32, 52));
+        ////.play(random(32, 52));
       }
       if (automateAction < 4) {
 #if defined(SYRENSIMPLE)
@@ -357,7 +448,7 @@ void loop() {
     if (Xbox.getButtonPress(R1, 0)) {
       if (vol > 0) {
         vol--;
-        mp3Trigger.setVolume(vol);
+       // //.setVolume(vol);
       }
     }
   }
@@ -366,7 +457,7 @@ void loop() {
     if (Xbox.getButtonPress(R1, 0)) {
       if (vol < 255) {
         vol++;
-        mp3Trigger.setVolume(vol);
+       // //.setVolume(vol);
       }
     }
   }
@@ -403,20 +494,21 @@ void loop() {
 
   // Y Button and Y combo buttons
   if (Xbox.getButtonClick(Y, 0)) {
-    if (Xbox.getButtonPress(L1, 0)) {
-      mp3Trigger.play(8);
+    //if (Xbox.getButtonPress(L1, 0)) {
+     // //.play(8);
       //logic lights, random
-      triggerI2C(10, 0);
-    } else if (Xbox.getButtonPress(L2, 0)) {
-      mp3Trigger.play(2);
+     // triggerI2C(10, 0);
+    //} else if 
+      if (Xbox.getButtonPress(L2, 0)) {
+      ////.play(2);
       //logic lights, random
       triggerI2C(10, 0);
     } else if (Xbox.getButtonPress(R1, 0)) {
-      mp3Trigger.play(9);
+     // //.play(9);
       //logic lights, random
       triggerI2C(10, 0);
     } else {
-      mp3Trigger.play(random(13, 17));
+     // //.play(random(13, 17));
       //logic lights, random
       triggerI2C(10, 0);
     }
@@ -425,7 +517,7 @@ void loop() {
   // A Button and A combo Buttons
   if (Xbox.getButtonClick(A, 0)) {
     if (Xbox.getButtonPress(L1, 0)) {
-      mp3Trigger.play(6);
+     // //.play(6);
       //logic lights
       triggerI2C(10, 6);
       // HPEvent 11 - SystemFailure - I2C
@@ -433,7 +525,7 @@ void loop() {
       triggerI2C(26, 11);
       triggerI2C(27, 11);
     } else if (Xbox.getButtonPress(L2, 0)) {
-      mp3Trigger.play(1);
+      //.play(1);
       //logic lights, alarm
       triggerI2C(10, 1);
       //  HPEvent 3 - alarm - I2C
@@ -441,11 +533,11 @@ void loop() {
       triggerI2C(26, 3);
       triggerI2C(27, 3);
     } else if (Xbox.getButtonPress(R1, 0)) {
-      mp3Trigger.play(11);
+   //   //.play(11);
       //logic lights, alarm2Display
       triggerI2C(10, 11);
     } else {
-      mp3Trigger.play(random(17, 25));
+     //// //.play(random(17, 25));
       //logic lights, random
       triggerI2C(10, 0);
     }
@@ -454,15 +546,15 @@ void loop() {
   // B Button and B combo Buttons
   if (Xbox.getButtonClick(B, 0)) {
     if (Xbox.getButtonPress(L1, 0)) {
-      mp3Trigger.play(7);
+    //  //.play(7);
       //logic lights, random
       triggerI2C(10, 0);
     } else if (Xbox.getButtonPress(L2, 0)) {
-      mp3Trigger.play(3);
+    //  //.play(3);
       //logic lights, random
       triggerI2C(10, 0);
     } else if (Xbox.getButtonPress(R1, 0)) {
-      mp3Trigger.play(10);
+     // //.play(10);
       //logic lights bargrap
       triggerI2C(10, 10);
       // HPEvent 1 - Disco - I2C
@@ -470,7 +562,7 @@ void loop() {
       triggerI2C(26, 10);
       triggerI2C(27, 10);
     } else {
-      mp3Trigger.play(random(32, 52));
+     // //.play(random(32, 52));
       //logic lights, random
       triggerI2C(10, 0);
     }
@@ -480,21 +572,21 @@ void loop() {
   if (Xbox.getButtonClick(X, 0)) {
     // leia message L1+X
     if (Xbox.getButtonPress(L1, 0)) {
-      mp3Trigger.play(5);
+    //  Trigger.play(5);
       //logic lights, leia message
       triggerI2C(10, 5);
       // Front HPEvent 1 - HoloMessage - I2C -leia message
       triggerI2C(25, 9);
     } else if (Xbox.getButtonPress(L2, 0)) {
-      mp3Trigger.play(4);
+      //.play(4);
       //logic lights
       triggerI2C(10, 4);
     } else if (Xbox.getButtonPress(R1, 0)) {
-      mp3Trigger.play(12);
+      //.play(12);
       //logic lights, random
       triggerI2C(10, 0);
     } else {
-      mp3Trigger.play(random(25, 32));
+      //.play(random(25, 32));
       //logic lights, random
       triggerI2C(10, 0);
     }
@@ -528,20 +620,20 @@ void loop() {
       //change to medium speed and play sound 3-tone
       drivespeed = DRIVESPEED2;
       Xbox.setLedOn(LED2, 0);
-      mp3Trigger.play(53);
+      //.play(53);
       triggerI2C(10, 22);
     } else if (drivespeed == DRIVESPEED2 && (DRIVESPEED3 != 0)) {
       //change to high speed and play sound scream
       drivespeed = DRIVESPEED3;
       Xbox.setLedOn(LED3, 0);
-      mp3Trigger.play(1);
+      //.play(1);
       triggerI2C(10, 23);
     } else {
       //we must be in high speed
       //change to low speed and play sound 2-tone
       drivespeed = DRIVESPEED1;
       Xbox.setLedOn(LED1, 0);
-      mp3Trigger.play(52);
+      //.play(52);
       triggerI2C(10, 21);
     }
   }
@@ -584,7 +676,13 @@ void loop() {
       turnThrottle = 0;
     }
     Sabertooth2x.turn(-turnThrottle);
+    if(turnThrottle != 0){
+          //Serial.println(-turnThrottle);
+    }
     Sabertooth2x.drive(driveThrottle);
+    if(driveThrottle != 0){
+         // Serial.print(driveThrottle);
+    }
   }
 
   // DOME DRIVE!
@@ -595,40 +693,8 @@ void loop() {
   }
 
   Syren10.motor(1, domeThrottle);
+  
 } // END loop()
-
-
-//*********************************Mike Addition**************//
-void receiveData()
-{
-    while(Serial.available()){
-    
-    char c = Serial.read();
-    
-        if (c=='$'){
-            counterStart = true;
-        }
-        if (counterStart){
-            if (counter < stringLength){
-            receivedString = String(receivedString + c);
-            counter ++;
-            }
-        if (counter >= stringLength){
-            
-            for (int i = 0; i< numOfValsRec; i++)
-            {
-            int num = (i*digitsPerValRec)+ 1;
-            valsRec[0] = receivedString.substring(num,num+digitsPerValRec).toInt();
-            }
-            receivedString = "";
-            counter = 0;
-            counterStart = false;
-        }
-        }
-    }
-}
-
-//*********************************Mike Addition**************//
 
 
 void triggerI2C(byte deviceID, byte eventID) {
