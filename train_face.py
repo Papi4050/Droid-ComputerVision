@@ -15,38 +15,6 @@ import time
 import platform
 import system_setup
 
-def running_on_jetson_nano():
-    '''
-    Returns
-    -------
-    platform: boolean
-        Returns 'True' if the current platform is AARCH64 based.
-    '''
-
-    # To make the same code work on a laptop or on a Jetson Nano, we'll detect
-    # when we are running on the Nano so that we can access the camera
-    # correctly in that case. On a normal Intel laptop, platform.machine()
-    # will be "x86_64" instead of "aarch64"
-    return platform.machine() == "aarch64"
-
-
-def get_jetson_gstreamer_source(capture_width=1280, capture_height=720,
-                                display_width=1280, display_height=720,
-                                framerate=60, flip_method=0):
-    """
-    Return an OpenCV-compatible video source description that uses gstreamer
-    to capture video from the camera on a Jetson Nano.
-    """
-    return (
-            f'nvarguscamerasrc ! video/x-raw(memory:NVMM), ' +
-            f'width=(int){capture_width}, height=(int){capture_height}, ' +
-            f'format=(string)NV12, framerate=(fraction){framerate}/1 ! ' +
-            f'nvvidconv flip-method={flip_method} ! ' +
-            f'video/x-raw, width=(int){display_width}, ' +
-            f'height=(int){display_height}, format=(string)BGRx ! ' +
-            'videoconvert ! video/x-raw, format=(string)BGR ! appsink'
-            )
-
 
 def createImageDir(path):
     '''
