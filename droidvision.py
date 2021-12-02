@@ -3,6 +3,7 @@ import configparser
 import sys
 import train_face as tf
 import live_tracking
+import manual_drive
 
 
 def input_parser():
@@ -87,6 +88,8 @@ def main():
     if my_args.learn is True:
         tf.createImageDir(imagePath)
         tf.captureFace(imagePath, my_args.name)
+    elif my_args.manual is True:
+        manual_drive.drive_controller()
     else:
         live_tracking.main()
 
