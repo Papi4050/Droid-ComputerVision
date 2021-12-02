@@ -35,6 +35,14 @@ def input_parser():
         required='-l' in sys.argv
     )
 
+    my_parser.add_argument(
+        '-m',
+        '--manual',
+        action='store_true',
+        help='Initiates manual drive mode',
+        required=False
+    )
+
     counter_inputs = my_parser.parse_args()
 
     return counter_inputs
