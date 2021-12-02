@@ -87,15 +87,15 @@ def main():
     baudRate = config_args[2]
 
     # Connect to serial communication
-    com_module.initSerialConnection(portNo, baudRate)
+    ser = com_module.initSerialConnection(portNo, baudRate)
 
     if my_args.learn is True:
         tf.createImageDir(imagePath)
         tf.captureFace(imagePath, my_args.name)
     elif my_args.manual is True:
-        manual_drive.drive_controller()
+        manual_drive.drive_controller(ser)
     else:
-        live_tracking.main()
+        live_tracking.main(ser)
 
     return 0
 
