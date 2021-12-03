@@ -133,6 +133,26 @@ def estDistance(y1, x2, y2, x1, h, w):
     return dist
 
 def findCenterHaar(imgObjects, objects):
+    '''
+    Parameters
+    ----------
+    imgObjects : image file
+        Current frame seen by live-feed with known face
+
+    objects : list
+        A list of tuples of found face locations in css (top, right, bottom,
+        left) order
+
+    Returns
+    -------
+    cx : float
+        Off-center information of knonwn face in x-direction
+    cy : float
+        Off-center information of knonwn face in y-direction
+    imgObjects : image file
+        Current frame seen by live-feed with known face including off-center
+        information
+    '''
     cx,cy = -1, -1
     if len(objects) != 0:
         x,y,w,h = objects[0][0]
