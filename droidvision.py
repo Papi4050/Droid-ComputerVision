@@ -45,6 +45,14 @@ def input_parser():
         required=False
     )
 
+    my_parser.add_argument(
+        '-u',
+        '--unknown_face',
+        action='store_true',
+        help='Initiates tracking of unknown face',
+        required=False
+    )
+
     counter_inputs = my_parser.parse_args()
 
     return counter_inputs
@@ -94,6 +102,8 @@ def main():
         tf.captureFace(imagePath, my_args.name)
     elif my_args.manual is True:
         manual_drive.drive_controller(ser)
+    elif my_args.unknown_face is True:
+        live_tracking.unknownFaceTrack()
     else:
         live_tracking.main(ser)
 
