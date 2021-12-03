@@ -45,6 +45,14 @@ def input_parser():
         required=False
     )
 
+    my_parser.add_argument(
+        '-u',
+        '--unknown_face',
+        action='store_true',
+        help='Initiates tracking of unknown face',
+        required=False
+    )
+
     counter_inputs = my_parser.parse_args()
 
     return counter_inputs
@@ -68,6 +76,7 @@ def config_input():
 
     # PATH PARSING
     imagePath = my_config['PATH']['image_path']
+    cascadePath = my_config['PATH']['cascade_path']
 
     # CONNECTION
     portNo = (my_config['CONNECTION']['port_no'])
@@ -83,8 +92,9 @@ def main():
 
     config_args = config_input()
     imagePath = config_args[0]
-    portNo = config_args[1]
-    baudRate = config_args[2]
+    cascadePath = config_args[1]
+    portNo = config_args[2]
+    baudRate = config_args[3]
 
     # Connect to serial communication
     ser = com_module.initSerialConnection(portNo, baudRate)
@@ -94,8 +104,10 @@ def main():
         tf.captureFace(imagePath, my_args.name)
     elif my_args.manual is True:
         manual_drive.drive_controller(ser)
+    elif my_args.unknown_face is True:
+        live_tracking.unknownFaceTrack(ser, cascadePath)
     else:
-        live_tracking.main(ser)
+        live_tracking.knwonFaceTrack(ser)
 
     return 0
 

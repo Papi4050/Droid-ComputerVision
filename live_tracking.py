@@ -12,8 +12,21 @@ import cv2
 import numpy as np
 import face_recognition
 import os
-import platform
 import system_setup
+
+
+def findObjects(img, objectCascade, scaleF=1.1, minN=4):
+    imgObjects = img.copy()
+    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    objectsOut = []
+    objects = objectCascade.detectMultiScale(imgGray, scaleF, minN)
+    for (x,y,w,h) in objects:
+        cv2.rectangle(imgObjects,(x,y),(x+w,y+h),(255,0,255),2)
+        objectsOut.append([[x,y,w,h],w*h])
+
+    objectsOut = sorted(objectsOut, key = lambda x:x[1], reverse=True)
+
+    return imgObjects, objectsOut
 
 
 # Get all encodings from the faces in the folder
@@ -118,7 +131,63 @@ def estDistance(y1, x2, y2, x1, h, w):
 
     return dist
 
-def main(ser):
+def findCenterHaar(imgObjects, objects):
+    '''
+    Parameters
+    ----------
+    imgObjects : image file
+        Current frame seen by live-feed with known face
+
+    objects : list
+        A list of tuples of found face locations in css (top, right, bottom,
+        left) order
+
+    Returns
+    -------
+    cx : float
+        Off-center information of knonwn face in x-direction
+    cy : float
+        Off-center information of knonwn face in y-direction
+    imgObjects : image file
+        Current frame seen by live-feed with known face including off-center
+        information
+    '''
+    cx,cy = -1, -1
+    if len(objects) != 0:
+        x,y,w,h = objects[0][0]
+        cx = x + w/2
+        cy = y + h/2
+        cv2.circle(imgObjects, (int(cx), int(cy)), 2, (0,255,0), cv2.FILLED)
+        ih, iw, ic = imgObjects.shape
+        cv2.line(imgObjects, (int(iw//2), int(cy)), (int(cx),int(cy)), (0,255,0), 1)
+        cv2.line(imgObjects, (int(cx), int(ih//2)), (int(cx),int(cy)), (0,255,0), 1)
+    return cx, cy, imgObjects
+
+
+def unknownFaceTrack(ser, cascade_path):
+
+    cap = system_setup.configurator()
+
+    faceCascade = cv2.CascadeClassifier(cascade_path)
+
+    while True:
+        success, img = cap.read()
+        img = cv2.resize(img, (0,0), None, 0.3,0.3)
+        imgObjects, objects = findObjects(img, faceCascade, 1.1, 5)
+        cx, cy, imgObjects = findCenterHaar(imgObjects, objects)
+
+        h,w,c = imgObjects.shape
+        cv2.line(imgObjects, (int(w/2),0), (int(w//2),int(h)), (255,0,255), 1)
+        cv2.line(imgObjects, (0,int(h//2)), (int(w),int(h)//2), (255,0,255), 1)
+
+        
+        img = cv2.resize(imgObjects, (0,0), None, 3,3)
+        cv2.imshow("Image", img)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+
+def knwonFaceTrack(ser):
     path = 'Images'
     images = []
     classNames = []
@@ -185,4 +254,4 @@ def main(ser):
             break
 
 if __name__ == "__main__":
-    main()  
+    knwonFaceTrack() 
