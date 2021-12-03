@@ -187,7 +187,7 @@ def unknownFaceTrack(ser, cascade_path):
             break
 
 
-def knwonFaceTrack(ser):
+def knwonFaceTrack(ser, driveConfig):
     path = 'Images'
     images = []
     classNames = []
@@ -244,10 +244,13 @@ def knwonFaceTrack(ser):
                             (255, 255, 255), 2)
 
                 h, w, c = img.shape
-                distance = estDistance(y1, x2, y2, x1, h, w)
                 cv2.line(img, (int(w/2), 0), (int(w//2), int(h)), (255, 0, 255), 1)
                 cv2.line(img, (0, int(h//2)), (int(w), int(h)//2),
                         (255, 0, 255), 1)
+
+                # Driving calculations
+                distance = estDistance(y1, x2, y2, x1, h, w)
+                turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - driveConfig["right_max"])/w) * cx))
 
         cv2.imshow('Webcam', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
