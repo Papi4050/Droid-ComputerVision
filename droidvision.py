@@ -105,7 +105,7 @@ def main():
     elif my_args.unknown_face is True:
         live_tracking.unknownFaceTrack()
     else:
-        live_tracking.main(ser)
+        live_tracking.knwonFaceTrack(ser)
 
     return 0
 
