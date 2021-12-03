@@ -48,4 +48,6 @@ def drive_controller(Key, ser):
 
 
 if __name__ == "__main__":
-    drive_controller()  
+    ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+    # TODO: Is the first variable actually needed? 
+    drive_controller('',ser)  
