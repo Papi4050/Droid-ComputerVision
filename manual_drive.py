@@ -55,14 +55,16 @@ def drive_controller(key, ser):
     return 0
 
 def main(ser):
-    with keyboard.Listener(
-        on_press=drive_controller) as listener:
+    with keyboard.Listener(on_press=lambda event: drive_controller(event,ser)) as listener:
         listener.join()
+#    with keyboard.Listener(
+ #       on_press=drive_controller) as listener:
+ #       listener.join()
 
 # ...or, in a non-blocking fashion:
-    listener = keyboard.Listener(
-        on_press=drive_controller)
-    listener.start()
+ #   listener = keyboard.Listener(
+  #      on_press=drive_controller)
+  #  listener.start()
 
 
 if __name__ == "__main__":
