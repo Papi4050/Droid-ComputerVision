@@ -82,8 +82,14 @@ def config_input():
     portNo = (my_config['CONNECTION']['port_no'])
     baudRate = int(my_config['CONNECTION']['baud_rate'])
 
-    config_list = [imagePath, cascadePath, portNo, baudRate]
-    print(config_list)
+    # DRIVECONFIG
+    left_max = int(my_config['DRIVECONFIG']['left_max'])
+    right_max = int(my_config['DRIVECONFIG']['right_max'])
+    forward_max = int(my_config['DRIVECONFIG']['forward_max'])
+    back_max = int(my_config['DRIVECONFIG']['back_max'])
+
+    config_list = [imagePath, cascadePath, portNo, baudRate, left_max,
+                   right_max, forward_max, back_max]
 
     return config_list
 
@@ -96,7 +102,9 @@ def main():
     cascadePath = config_args[1]
     portNo = config_args[2]
     baudRate = config_args[3]
-
+    driveConfig = {"left_max":config_args[4], "right_max":config_args[5],
+                   "forward_max":config_args[6], "back_max":config_args[7]}
+    
     # Connect to serial communication
     ser = com_module.initSerialConnection(portNo, baudRate)
 
@@ -108,7 +116,7 @@ def main():
     elif my_args.unknown_face is True:
         live_tracking.unknownFaceTrack(ser, cascadePath)
     else:
-        live_tracking.knwonFaceTrack(ser)
+        live_tracking.knwonFaceTrack(ser, driveConfig)
 
     return 0
 
