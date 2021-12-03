@@ -133,7 +133,9 @@ def estDistance(y1, x2, y2, x1, h, w):
 
     return dist
 
-def unknownFaceTrack(cap):
+def unknownFaceTrack():
+
+    cap = system_setup.configurator()
 
     faceCascade = cv2.CascadeClassifier("../Prototyping/resources/haarcascade_frontalface_default.xml")
 
