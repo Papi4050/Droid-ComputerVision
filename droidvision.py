@@ -82,7 +82,8 @@ def config_input():
     portNo = (my_config['CONNECTION']['port_no'])
     baudRate = int(my_config['CONNECTION']['baud_rate'])
 
-    config_list = [imagePath, portNo, baudRate]
+    config_list = [imagePath, cascadePath, portNo, baudRate]
+    print(config_list)
 
     return config_list
 
