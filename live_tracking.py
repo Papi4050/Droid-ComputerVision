@@ -192,7 +192,7 @@ def unknownFaceTrack():
 
 
 
-def main(ser):
+def knwonFaceTrack(ser):
     path = 'Images'
     images = []
     classNames = []
@@ -259,4 +259,4 @@ def main(ser):
             break
 
 if __name__ == "__main__":
-    main()  
+    knwonFaceTrack() 
