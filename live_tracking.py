@@ -167,9 +167,7 @@ def findCenterHaar(imgObjects, objects):
 
 def unknownFaceTrack(ser, cascade_path):
 
-    #cap = system_setup.configurator()
-
-    cap = cv2.VideoCapture(0)
+    cap = system_setup.configurator()
 
     faceCascade = cv2.CascadeClassifier(cascade_path)
 
