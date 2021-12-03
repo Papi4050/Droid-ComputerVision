@@ -16,6 +16,21 @@ import platform
 import system_setup
 
 
+def findObjects(img, objectCascade, scaleF = 1.1, minN = 4):
+
+    imgObjects = img.copy
+    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    objects = objectCascade.detectMultiScale(imgGray, scaleF, minN)
+    objectsOut = []
+    for (x,y,w,h) in objects:
+        cv2.rectangle(imgObjects, (x,y), (x+w, y+h), (255,0,255),2)
+        objectsOut.append([[x,y,w,h],w*h])
+
+    objectsOut = sorted(objectsOut, key = lambda x:x[1], reverse=True)
+
+    return imgObjects, objects
+
+
 # Get all encodings from the faces in the folder
 def findEncodings(images):
     '''
@@ -117,6 +132,29 @@ def estDistance(y1, x2, y2, x1, h, w):
     dist = (area_uncovered*22)/860096
 
     return dist
+
+def unknownFaceTrack(cap):
+
+    faceCascade = cv2.CascadeClassifier("../Prototyping/resources/haarcascade_frontalface_default.xml")
+
+    while True:
+        success, img = cap.read()
+        img = cv2.resize(img, (0,0), None, 0.3,0.3)
+        imgObjects, objects = findObjects(img, faceCascade, 1.1, 5)
+        cx, cy, imgObjects = findCenter(imgObjects, objects)
+
+        h,w,c = imgObjects.shape
+        cv2.line(imgObjects, (int(w/2),0), (int(w//2),int(h)), (255,0,255), 1)
+        cv2.line(imgObjects, (0,int(h//2)), (int(w),int(h)//2), (255,0,255), 1)
+
+        
+        img = cv2.resize(imgObjects, (0,0), None, 3,3)
+        cv2.imshow("Image", img)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+
+
 
 def main(ser):
     path = 'Images'
