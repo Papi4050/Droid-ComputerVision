@@ -10,11 +10,7 @@ This will be used in case a manual mode is required to control the robot
 '''
 
 
-<<<<<<< HEAD
-def drive_controller(key):
-=======
 def drive_controller(Key, ser):
->>>>>>> 90d2f6bb19c17fef1d7bafbee23453583facaa83
     '''
     Parameters
     ----------
@@ -35,6 +31,7 @@ def drive_controller(Key, ser):
         #print(key, type(key),key.vk)
         if key.vk == 119:
             print("drive forward")
+            com_module.sendData(ser,[111,111],3)
         if key.vk == 97:
             print("drive left")
         if key.vk == 115:
@@ -69,6 +66,6 @@ def main():
 
 
 if __name__ == "__main__":
-    ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+    ser = com_module.initSerialConnection("//dev/ttyACM0", 2400)
     # TODO: Is the first variable actually needed? 
     drive_controller('',ser)  
