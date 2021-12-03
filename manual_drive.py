@@ -44,7 +44,7 @@ def drive_controller(key, ser):
 
     # This function only needs to be sent once
     # TODO: Determine proper location for this
-    # ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+    ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
 
 
     # This is the command to send data via the serial terminal
@@ -54,7 +54,7 @@ def drive_controller(key, ser):
     #com_module.sendData(ser, data, digits)
     return 0
 
-def main():
+def main(ser):
     with keyboard.Listener(
         on_press=drive_controller) as listener:
         listener.join()
@@ -68,4 +68,5 @@ def main():
 if __name__ == "__main__":
     ser = com_module.initSerialConnection("//dev/ttyACM0", 2400)
     # TODO: Is the first variable actually needed? 
-    drive_controller('',ser)  
+    #drive_controller('',ser)  
+    main(ser)
