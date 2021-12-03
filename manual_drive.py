@@ -10,7 +10,7 @@ This will be used in case a manual mode is required to control the robot
 '''
 
 
-def drive_controller(Key, ser):
+def drive_controller(key, ser):
     '''
     Parameters
     ----------
