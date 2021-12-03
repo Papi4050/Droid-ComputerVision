@@ -11,7 +11,7 @@ This will be used in case a manual mode is required to control the robot
 '''
 
 
-def drive_controller(Key):
+def drive_controller(Key, ser):
     '''
     Parameters
     ----------
@@ -34,7 +34,7 @@ def drive_controller(Key):
     
     # This function only needs to be sent once
     # TODO: Determine proper location for this
-    ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+    # ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
 
 
     
