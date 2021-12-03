@@ -17,18 +17,17 @@ import system_setup
 
 
 def findObjects(img, objectCascade, scaleF = 1.1, minN = 4):
-
-    imgObjects = img.copy
+    imgObjects = img.copy()
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    objects = objectCascade.detectMultiScale(imgGray, scaleF, minN)
     objectsOut = []
+    objects = objectCascade.detectMultiScale(imgGray, scaleF, minN)
     for (x,y,w,h) in objects:
-        cv2.rectangle(imgObjects, (x,y), (x+w, y+h), (255,0,255),2)
+        cv2.rectangle(imgObjects,(x,y),(x+w,y+h),(255,0,255),2)
         objectsOut.append([[x,y,w,h],w*h])
 
     objectsOut = sorted(objectsOut, key = lambda x:x[1], reverse=True)
 
-    return imgObjects, objects
+    return imgObjects, objectsOut
 
 
 # Get all encodings from the faces in the folder
@@ -133,9 +132,24 @@ def estDistance(y1, x2, y2, x1, h, w):
 
     return dist
 
+def findCenterHaar(imgObjects, objects):
+    cx,cy = -1, -1
+    if len(objects) != 0:
+        x,y,w,h = objects[0][0]
+        cx = x + w/2
+        cy = y + h/2
+        cv2.circle(imgObjects, (int(cx), int(cy)), 2, (0,255,0), cv2.FILLED)
+        ih, iw, ic = imgObjects.shape
+        cv2.line(imgObjects, (int(iw//2), int(cy)), (int(cx),int(cy)), (0,255,0), 1)
+        cv2.line(imgObjects, (int(cx), int(ih//2)), (int(cx),int(cy)), (0,255,0), 1)
+    return cx, cy, imgObjects
+
+
 def unknownFaceTrack():
 
-    cap = system_setup.configurator()
+    #cap = system_setup.configurator()
+
+    cap = cv2.VideoCapture(0)
 
     faceCascade = cv2.CascadeClassifier("../Prototyping/resources/haarcascade_frontalface_default.xml")
 
@@ -143,7 +157,7 @@ def unknownFaceTrack():
         success, img = cap.read()
         img = cv2.resize(img, (0,0), None, 0.3,0.3)
         imgObjects, objects = findObjects(img, faceCascade, 1.1, 5)
-        cx, cy, imgObjects = findCenter(imgObjects, objects)
+        cx, cy, imgObjects = findCenterHaar(imgObjects, objects)
 
         h,w,c = imgObjects.shape
         cv2.line(imgObjects, (int(w/2),0), (int(w//2),int(h)), (255,0,255), 1)
