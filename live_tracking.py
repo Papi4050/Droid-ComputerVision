@@ -12,11 +12,10 @@ import cv2
 import numpy as np
 import face_recognition
 import os
-import platform
 import system_setup
 
 
-def findObjects(img, objectCascade, scaleF = 1.1, minN = 4):
+def findObjects(img, objectCascade, scaleF=1.1, minN=4):
     imgObjects = img.copy()
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     objectsOut = []
@@ -186,8 +185,6 @@ def unknownFaceTrack(ser, cascade_path):
         cv2.imshow("Image", img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
-
 
 
 def knwonFaceTrack(ser):
