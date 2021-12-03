@@ -76,6 +76,7 @@ def config_input():
 
     # PATH PARSING
     imagePath = my_config['PATH']['image_path']
+    cascadePath = my_config['PATH']['cascade_path']
 
     # CONNECTION
     portNo = (my_config['CONNECTION']['port_no'])
@@ -91,8 +92,9 @@ def main():
 
     config_args = config_input()
     imagePath = config_args[0]
-    portNo = config_args[1]
-    baudRate = config_args[2]
+    cascadePath = config_args[1]
+    portNo = config_args[2]
+    baudRate = config_args[3]
 
     # Connect to serial communication
     ser = com_module.initSerialConnection(portNo, baudRate)
@@ -103,7 +105,7 @@ def main():
     elif my_args.manual is True:
         manual_drive.drive_controller(ser)
     elif my_args.unknown_face is True:
-        live_tracking.unknownFaceTrack()
+        live_tracking.unknownFaceTrack(ser, cascadePath)
     else:
         live_tracking.knwonFaceTrack(ser)
 
