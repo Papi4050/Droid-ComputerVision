@@ -10,7 +10,11 @@ This will be used in case a manual mode is required to control the robot
 '''
 
 
+<<<<<<< HEAD
 def drive_controller(key):
+=======
+def drive_controller(Key, ser):
+>>>>>>> 90d2f6bb19c17fef1d7bafbee23453583facaa83
     '''
     Parameters
     ----------
@@ -43,7 +47,8 @@ def drive_controller(key):
 
     # This function only needs to be sent once
     # TODO: Determine proper location for this
-    #ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+    # ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+
 
     # This is the command to send data via the serial terminal
     # 'ser' needs to set to provide connection info
@@ -64,4 +69,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+    # TODO: Is the first variable actually needed? 
+    drive_controller('',ser)  
