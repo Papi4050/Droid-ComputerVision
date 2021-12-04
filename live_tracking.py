@@ -13,6 +13,25 @@ import numpy as np
 import face_recognition
 import os
 import system_setup
+import com_module
+
+perrorLR = 0
+
+def trackObject(cx, cy, w, h, ser):
+
+    global perrorLR
+
+    kLR = [0.4, 0.1]
+    kUD = [0.5, 0.5]
+
+    # Left and Right 
+    if cx!=-1:
+        errorLR = w/2 -cx
+        posX = kLR[0] * errorLR * kLR[1] * (errorLR - perrorLR)
+        posX = int(np.interp(posX, [-w//2,w//2], [20,160]))
+        perrorLR = errorLR
+
+        com_module.sendData(ser, [posX, 90],3)   
 
 
 def findObjects(img, objectCascade, scaleF=1.1, minN=4):
@@ -251,6 +270,8 @@ def knwonFaceTrack(ser, driveConfig):
                 # Driving calculations
                 distance = estDistance(y1, x2, y2, x1, h, w)
                 turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - driveConfig["right_max"])/w) * cx))
+                trackObject(cx, cy, w, h, ser)
+
 
         cv2.imshow('Webcam', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
