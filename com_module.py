@@ -24,6 +24,7 @@ def initSerialConnection(portNo, baudRate):
     try:
         ser = serial.Serial(portNo,baudRate,timeout=1)
         print("Device Connected")
+        print(ser)
         return ser
     except:
         print("Not connected")
@@ -54,4 +55,5 @@ def sendData(se, data, digits):
 
 if __name__ == "__main__":
     # TODO: set up the port right
-    ser = initSerialConnection("//dev/ttyACM0", 115200)
+    #ser = initSerialConnection("/dev/ttyACM0", 2400)
+    ser = initSerialConnection("/dev/cu.usbmodem11401", 2400)
