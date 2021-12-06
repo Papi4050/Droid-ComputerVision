@@ -54,4 +54,4 @@ def sendData(se, data, digits):
 
 if __name__ == "__main__":
     # TODO: set up the port right
-    ser = initSerialConnection("//dev/ttyACM0", 115200)
+    ser = initSerialConnection("/dev/ttyACM0", 2400)

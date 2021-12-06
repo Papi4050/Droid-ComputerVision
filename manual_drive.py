@@ -1,6 +1,5 @@
 import com_module
-from pynput.keyboard import Key, Listener
-
+from pynput import keyboard
 
 
 '''
@@ -11,7 +10,7 @@ This will be used in case a manual mode is required to control the robot
 '''
 
 
-def drive_controller(Key):
+def drive_controller(key, ser):
     '''
     Parameters
     ----------
@@ -28,24 +27,48 @@ def drive_controller(Key):
         R2 will drive left or right
     '''
     #this listens to see if keys are pressed
-    if Key == keyboard.Key.w:
-        print("forward Pressed")
-    
-    
+    try:
+        #print(key, type(key),key.vk)
+        if key.vk == 119:
+            print("drive forward")
+            com_module.sendData(ser,[111,111],3)
+        if key.vk == 97:
+            print("drive left")
+        if key.vk == 115:
+            print("drive backward")
+        if key.vk == 100:
+            print("drive right")
+    except AttributeError:
+        print('special key {0} pressed'.format(
+            key))
+
     # This function only needs to be sent once
     # TODO: Determine proper location for this
-    ser = com_module.initSerialConnection("//dev/ttyACM0", 115200)
+    #ser = com_module.initSerialConnection("/dev/ttyACM0", 115200)
 
 
-    
-    
     # This is the command to send data via the serial terminal
     # 'ser' needs to set to provide connection info
     # 'data' is the information you are trying to send via serial
     # 'digits is transfer length
-    com_module.sendData(ser, data, digits)
+    #com_module.sendData(ser, data, digits)
     return 0
+
+def main(ser):
+    with keyboard.Listener(on_press=lambda event: drive_controller(event,ser)) as listener:
+        listener.join()
+#    with keyboard.Listener(
+ #       on_press=drive_controller) as listener:
+ #       listener.join()
+
+# ...or, in a non-blocking fashion:
+ #   listener = keyboard.Listener(
+  #      on_press=drive_controller)
+  #  listener.start()
 
 
 if __name__ == "__main__":
-    drive_controller()  
+    ser = com_module.initSerialConnection("/dev/ttyACM0", 2400)
+    # TODO: Is the first variable actually needed? 
+    #drive_controller('',ser)  
+    main(ser)
