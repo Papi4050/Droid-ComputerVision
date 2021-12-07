@@ -92,7 +92,7 @@ def captureFace(path, name):
 
         except IndexError:
             print("Face not detected in image, another photo will be taken")
-            time.sleep(1)
+            time.sleep(2)
 
 
     final_path = f'{path}/{name}-{uniqueID}.png'
