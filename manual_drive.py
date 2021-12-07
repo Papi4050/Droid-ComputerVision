@@ -58,6 +58,7 @@ def drive_controller_on(key, ser):
 
 def drive_controller_off(key, ser):
     print("released")
+    com_module.sendData(ser,[000,000],3)
     return 0
 
 def main(ser):
@@ -74,7 +75,7 @@ def main(ser):
 
 
 if __name__ == "__main__":
-    ser = com_module.initSerialConnection("/dev/ttyACM0", 19200)
+    ser = com_module.initSerialConnection("/dev/ttyACM2", 2400)
     # TODO: Is the first variable actually needed? 
     #drive_controller('',ser)  
     main(ser)
