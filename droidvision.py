@@ -4,6 +4,7 @@ import sys
 import train_face as tf
 import live_tracking
 import manual_drive
+import com_module
 
 
 def input_parser():
@@ -44,6 +45,14 @@ def input_parser():
         required=False
     )
 
+    my_parser.add_argument(
+        '-u',
+        '--unknown_face',
+        action='store_true',
+        help='Initiates tracking of unknown face',
+        required=False
+    )
+
     counter_inputs = my_parser.parse_args()
 
     return counter_inputs
@@ -67,12 +76,20 @@ def config_input():
 
     # PATH PARSING
     imagePath = my_config['PATH']['image_path']
+    cascadePath = my_config['PATH']['cascade_path']
 
     # CONNECTION
     portNo = (my_config['CONNECTION']['port_no'])
     baudRate = int(my_config['CONNECTION']['baud_rate'])
 
-    config_list = [imagePath, portNo, baudRate]
+    # DRIVECONFIG
+    left_max = int(my_config['DRIVECONFIG']['left_max'])
+    right_max = int(my_config['DRIVECONFIG']['right_max'])
+    forward_max = int(my_config['DRIVECONFIG']['forward_max'])
+    back_max = int(my_config['DRIVECONFIG']['back_max'])
+
+    config_list = [imagePath, cascadePath, portNo, baudRate, left_max,
+                   right_max, forward_max, back_max]
 
     return config_list
 
@@ -82,16 +99,24 @@ def main():
 
     config_args = config_input()
     imagePath = config_args[0]
-    portNo = config_args[1]
-    baudRate = config_args[2]
+    cascadePath = config_args[1]
+    portNo = config_args[2]
+    baudRate = config_args[3]
+    driveConfig = {"left_max":config_args[4], "right_max":config_args[5],
+                   "forward_max":config_args[6], "back_max":config_args[7]}
+    
+    # Connect to serial communication
+    ser = com_module.initSerialConnection(portNo, baudRate)
 
     if my_args.learn is True:
         tf.createImageDir(imagePath)
         tf.captureFace(imagePath, my_args.name)
     elif my_args.manual is True:
-        manual_drive.drive_controller()
+        manual_drive.drive_controller(ser)
+    elif my_args.unknown_face is True:
+        live_tracking.unknownFaceTrack(ser, cascadePath)
     else:
-        live_tracking.main()
+        live_tracking.knwonFaceTrack(ser, driveConfig)
 
     return 0
 
