@@ -49,7 +49,7 @@ int counter = 0;
 bool counterStart = false;
 String receivedString;
 int toggleCounter = 0;
-const int JetsonBaud = 115200;
+const int JetsonBaud = 2400;
 int driveCommand = 0;
 int turnCommand = 0;
 
@@ -376,6 +376,21 @@ void loop() {
       Serial.println("movingforward");
       Sabertooth2x.drive(25);
       Sabertooth2x.turn(0);
+      valsRec[0] = 000;
+    }else if (valsRec[0] == 222){
+      Serial.println("turnleft");
+      Sabertooth2x.drive(0);
+      Sabertooth2x.turn(30); 
+      valsRec[0] = 000;
+    }else if (valsRec[0] == 333){
+      Serial.println("turnright");
+      Sabertooth2x.drive(0);
+      Sabertooth2x.turn(-30);
+      valsRec[0] = 000;
+    }else if (valsRec[0] == 444){
+      Serial.println("backup");
+      Sabertooth2x.drive(0);
+      Sabertooth2x.turn(-30);
       valsRec[0] = 000;
     }else
       Serial.println("not moving");
