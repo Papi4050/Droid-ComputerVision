@@ -61,7 +61,7 @@ def drive_controller_off(key, ser):
     return 0
 
 def main(ser):
-    with keyboard.Listener(on_press=lambda event: drive_controller(event,ser), on_release=lambda event:drive_controller_off(event, ser)) as listener:
+    with keyboard.Listener(on_press=lambda event: drive_controller_on(event,ser), on_release=lambda event:drive_controller_off(event, ser)) as listener:
         listener.join()
 #    with keyboard.Listener(
  #       on_press=drive_controller) as listener:
