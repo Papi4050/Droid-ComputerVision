@@ -281,7 +281,7 @@ void receiveData()
             for (int i = 0; i< numOfValsRec; i++)
             {
             int num = (i*digitsPerValRec)+ 1;
-            valsRec[0] = receivedString.substring(num,num+digitsPerValRec).toInt();
+            valsRec[i] = receivedString.substring(num,num+digitsPerValRec).toInt();
             }
             receivedString = "";
             counter = 0;
@@ -372,30 +372,55 @@ void loop() {
 // tracking mode has started.  This will set the motors to zero and wait to receive serial commands
  if (isInTrackingMode){
     receiveData();
-    if (valsRec[0]==111){
+    while (valsRec[0] == 111){
+      //Serial.println("movingforward");
+      Sabertooth2x.drive(valsRec[1]);
+      Sabertooth2x.turn(0);
+      receiveData();
+    }
+    while (valsRec[0] == 222){
+      //Serial.println("movingforward");
+      Sabertooth2x.drive(0);
+      Sabertooth2x.turn(valsRec[1]);
+      receiveData();
+    }
+    while (valsRec[0] == 333){
       Serial.println("movingforward");
-      Sabertooth2x.drive(25);
+      Sabertooth2x.drive(0);
+      Sabertooth2x.turn(-valsRec[1]);
+      receiveData();
+    }
+    while (valsRec[0] == 444){
+      Serial.println("movingforward");
+      Sabertooth2x.drive(valsRec[1]);
       Sabertooth2x.turn(0);
-      valsRec[0] = 000;
-    }else if (valsRec[0] == 222){
-      Serial.println("turnleft");
-      Sabertooth2x.drive(0);
-      Sabertooth2x.turn(30); 
-      valsRec[0] = 000;
-    }else if (valsRec[0] == 333){
-      Serial.println("turnright");
-      Sabertooth2x.drive(0);
-      Sabertooth2x.turn(-30);
-      valsRec[0] = 000;
-    }else if (valsRec[0] == 444){
-      Serial.println("backup");
-      Sabertooth2x.drive(0);
-      Sabertooth2x.turn(-30);
-      valsRec[0] = 000;
-    }else
-      Serial.println("not moving");
-      Sabertooth2x.drive(0);
-      Sabertooth2x.turn(0);
+      receiveData();
+    }
+    
+    // (valsRec[0]==111){
+    //  Serial.println("movingforward");
+    //  Sabertooth2x.drive(45);
+    //  Sabertooth2x.turn(0);
+      //valsRec[0] = 000;
+//    if (valsRec[0] == 222){
+//      Serial.println("turnleft");
+//      Sabertooth2x.drive(0);
+//      Sabertooth2x.turn(45); 
+//      //valsRec[0] = 000;
+//    }else if (valsRec[0] == 333){
+//      Serial.println("turnright");
+//      Sabertooth2x.drive(0);
+//      Sabertooth2x.turn(-45);
+//      //valsRec[0] = 000;
+//    }else if (valsRec[0] == 444){
+//      Serial.println("backup");
+//      Sabertooth2x.drive(0);
+//      Sabertooth2x.turn(-35);
+//      //valsRec[0] = 000;
+//    }else
+//      Serial.println("not moving");
+//      Sabertooth2x.drive(0);
+//      Sabertooth2x.turn(0);
 
   
   //Sabertooth2x.drive(0);
