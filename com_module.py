@@ -22,7 +22,7 @@ def initSerialConnection(portNo, baudRate):
         Connection information
     '''
     try:
-        ser = serial.Serial(portNo,baudRate,timeout=1)
+        ser = serial.Serial(portNo,baudRate,timeout=10)
         print("Device Connected")
         return ser
     except:
@@ -54,4 +54,4 @@ def sendData(se, data, digits):
 
 if __name__ == "__main__":
     # TODO: set up the port right
-    ser = initSerialConnection("//dev/ttyACM0", 115200)
+    ser = initSerialConnection("/dev/ttyACM1", 115200)

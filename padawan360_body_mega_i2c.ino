@@ -49,7 +49,7 @@ int counter = 0;
 bool counterStart = false;
 String receivedString;
 int toggleCounter = 0;
-const int JetsonBaud = 2400;
+const int JetsonBaud = 115200;
 int driveCommand = 0;
 int turnCommand = 0;
 
@@ -358,9 +358,12 @@ void loop() {
       ////.play(1);
       if (isInTrackingMode) {
         isInTrackingMode = false;
+        Serial.println("exit tracking mode");
         ////.play(53);
     } else {
       isInTrackingMode = true;
+      Serial.println("entered tracking mode");
+
      // //.play(1);
     }
   }
@@ -368,38 +371,54 @@ void loop() {
 
 // tracking mode has started.  This will set the motors to zero and wait to receive serial commands
  if (isInTrackingMode){
+    receiveData();
+    if (valsRec[0]==111){
+      Serial.println("movingforward");
+      Sabertooth2x.drive(25);
+      Sabertooth2x.turn(0);
+      valsRec[0] = 000;
+    }else
+      Serial.println("not moving");
+      Sabertooth2x.drive(0);
+      Sabertooth2x.turn(0);
+
+  
   //Sabertooth2x.drive(0);
   //Sabertooth2x.turn(0);
   //if the value 111 is received in the second cluster, ie. $234111 this will engage the while loop that will drive it forard
   //this while loop will disengage if a different value is received
-  while (valsRec[0] == 111){
-    Serial.println("movingforward");
-    Sabertooth2x.drive(25);
-    Sabertooth2x.turn(0);
-    receiveData();
-  }
+
+
+//  while (valsRec[0] == 111){
+//    Serial.println("movingforward");
+//    Sabertooth2x.drive(25);
+//    Sabertooth2x.turn(0);
+//    receiveData();
+//  }
   //if the value 111 is received in the second cluster, ie. $222111 this will engage the while loop that will drive it forard
   //this while loop will disengage if a different value is received
-  while (valsRec[0] == 222 ){
-    Serial.println("turnright");
-    Sabertooth2x.drive(0);
-    Sabertooth2x.turn(-30);
-    receiveData();
-  }
-    while (valsRec[0] == 333){
-    Serial.println("tunleft");
-    Sabertooth2x.drive(0);
-    Sabertooth2x.turn(30);
-    receiveData();
-  }
-  if (valsRec[0] != 111){
-    if (valsRec[0] != 222){
-      if (valsRec[0] != 333){
-          receiveData();
-          Serial.println("notdriving");
-      }
-    }
-  }
+ 
+  
+//  while (valsRec[0] == 222 ){
+//    Serial.println("turnright");
+//    Sabertooth2x.drive(0);
+//    Sabertooth2x.turn(-30);
+//    receiveData();
+//  }
+//    while (valsRec[0] == 333){
+//    Serial.println("tunleft");
+//    Sabertooth2x.drive(0);
+//    Sabertooth2x.turn(30);
+//    receiveData();
+  //}
+//  if (valsRec[0] != 111){
+//    if (valsRec[0] != 222){
+//      if (valsRec[0] != 333){
+//          receiveData();
+//          Serial.println("notdriving");
+    //  }
+   // }
+  //}
 }
     
 
