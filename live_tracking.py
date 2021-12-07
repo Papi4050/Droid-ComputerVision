@@ -13,6 +13,7 @@ import numpy as np
 import face_recognition
 import os
 import system_setup
+import com_module
 
 
 def findObjects(img, objectCascade, scaleF=1.1, minN=4):
@@ -187,7 +188,7 @@ def unknownFaceTrack(ser, cascade_path):
             break
 
 
-def knwonFaceTrack(ser, driveConfig):
+def knownFaceTrack(ser, driveConfig):
     path = 'Images'
     images = []
     classNames = []
@@ -251,10 +252,34 @@ def knwonFaceTrack(ser, driveConfig):
                 # Driving calculations
                 distance = estDistance(y1, x2, y2, x1, h, w)
                 turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - driveConfig["right_max"])/w) * cx))
+                val = (abs(turn_input)*20)+20
+
+                if turn_input > .25:
+                    print("drive left")
+                    com_module.sendData(ser,[333,27],3)
+
+                elif turn_input < -.25:
+                    print("drive right")
+                    com_module.sendData(ser,[222,27],3)
+
+                else:
+                    print("good enough")
+                    com_module.sendData(ser,[000,000],3)
+
+            else:
+                print("nofaceeeeeeeeee")
+                com_module.sendData(ser,[000,000],3)
 
         cv2.imshow('Webcam', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
 if __name__ == "__main__":
-    knwonFaceTrack() 
+    ser = com_module.initSerialConnection("/dev/ttyACM2", 19200)
+    driveConfig = {
+        "left_max":-30,
+        "right_max": 30,
+        "forward_max": 30,
+        "back_max": -30
+    }
+    knownFaceTrack(ser, driveConfig) 
