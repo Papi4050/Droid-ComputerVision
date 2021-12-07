@@ -10,7 +10,7 @@ This will be used in case a manual mode is required to control the robot
 '''
 
 
-def drive_controller(key, ser):
+def drive_controller_on(key, ser):
     '''
     Parameters
     ----------
@@ -57,8 +57,12 @@ def drive_controller(key, ser):
     #com_module.sendData(ser, data, digits)
     return 0
 
+def drive_controller_off(key, ser):
+    print("released")
+    return 0
+
 def main(ser):
-    with keyboard.Listener(on_press=lambda event: drive_controller(event,ser)) as listener:
+    with keyboard.Listener(on_press=lambda event: drive_controller(event,ser), on_release=lambda event:drive_controller_off(event, ser)) as listener:
         listener.join()
 #    with keyboard.Listener(
  #       on_press=drive_controller) as listener:
