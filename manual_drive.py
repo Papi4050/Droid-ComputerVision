@@ -34,16 +34,15 @@ def drive_controller(key, ser):
             com_module.sendData(ser,[111,111],3)
         if key.vk == 97:
             print("drive left")
-	    com_module.sendData(ser,[222,222],3)
+            com_module.sendData(ser,[222,222],3)
         if key.vk == 115:
             print("drive backward")
-	    com_module.sendData(ser,[444,444],3)
+            com_module.sendData(ser,[444,444],3)
         if key.vk == 100:
             print("drive right")
-	    com_module.sendData(ser,[333,333],3)
+            com_module.sendData(ser,[333,333],3)
     except AttributeError:
-        print('special key {0} pressed'.format(
-            key))
+        print('special key {0} pressed'.format(key))
 
     # This function only needs to be sent once
     # TODO: Determine proper location for this
@@ -71,7 +70,7 @@ def main(ser):
 
 
 if __name__ == "__main__":
-    ser = com_module.initSerialConnection("/dev/ttyACM0", 2400)
+    ser = com_module.initSerialConnection("/dev/ttyACM0", 19200)
     # TODO: Is the first variable actually needed? 
     #drive_controller('',ser)  
     main(ser)
