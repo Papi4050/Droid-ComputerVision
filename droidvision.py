@@ -116,7 +116,7 @@ def main():
     elif my_args.unknown_face is True:
         live_tracking.unknownFaceTrack(ser, cascadePath)
     else:
-        live_tracking.knwonFaceTrack(ser, driveConfig)
+        live_tracking.knownFaceTrack(ser, driveConfig)
 
     return 0
 
