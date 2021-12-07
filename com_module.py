@@ -22,7 +22,7 @@ def initSerialConnection(portNo, baudRate):
         Connection information
     '''
     try:
-        ser = serial.Serial(portNo,baudRate,timeout=10)
+        ser = serial.Serial(portNo,baudRate,timeout=100)
         print("Device Connected")
         return ser
     except:
