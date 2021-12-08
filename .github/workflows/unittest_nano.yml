@@ -16,4 +16,4 @@ jobs:
         with:
           python-version: 3.7
       - name: Run the unittest script
-        run: python com_module.py -v
+        run: python com_module_test.py -v
