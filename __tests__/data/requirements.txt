@@ -2,3 +2,4 @@
 # $ conda create --name <env> --file <this file>
 # platform: osx-arm64
 pyserial==3.4
+opencv-python==4.54.58
