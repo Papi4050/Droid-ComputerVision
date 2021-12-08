@@ -15,7 +15,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
-          cache: pip test
       - run: pip install -r requirements.txt
       - run: pip test
       - name: Run the unittest script
