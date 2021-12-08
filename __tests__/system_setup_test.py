@@ -3,6 +3,8 @@ import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import system_setup
+
 # A class in which we test functions of our module
 class systemSetupTest(unittest.TestCase):
 
