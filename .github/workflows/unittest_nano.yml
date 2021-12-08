@@ -18,4 +18,4 @@ jobs:
           cache: 'pip'
       - run: pip install -r __tests__/data/requirements.txt
       - name: Run the unittest script
-        run: python com_module_test.py -v
+        run: python __tests__/com_module_test.py -v
