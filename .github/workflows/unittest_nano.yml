@@ -16,6 +16,6 @@ jobs:
         with:
           python-version: '3.10'
           cache: 'pip'
-      - run: pip install -r requirements.txt
+      - run: pip install -r __tests__/data/requirements.txt
       - name: Run the unittest script
         run: python com_module_test.py -v
