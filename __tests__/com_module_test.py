@@ -1,7 +1,7 @@
 import unittest
-import sys
+import os, sys
 
-sys.path.insert(0, '../')
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import com_module as cm
 
