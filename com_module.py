@@ -50,6 +50,8 @@ def sendData(se, data, digits):
         print(myString)
     except:
         print("Data Transmission failed!")
+    
+    return myString
 
 
 if __name__ == "__main__":
