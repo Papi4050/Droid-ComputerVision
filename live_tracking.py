@@ -282,7 +282,7 @@ def knownFaceTrack(ser, driveConfig):
             break
 
 if __name__ == "__main__":
-    ser = com_module.initSerialConnection("/dev/ttyACM2", 19200)
+    ser = com_module.initSerialConnection("/dev/ttyACM0", 2400)
     driveConfig = {
         "left_max":-30,
         "right_max": 30,
