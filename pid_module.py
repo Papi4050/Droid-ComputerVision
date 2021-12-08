@@ -8,7 +8,7 @@
     #return control
 
 
-def pidControllerLR(errorLR):
+def pidControllerLR(errorLR,oldError):
    #K values for PID tuning (modify these)
    kLR = [0.5, 0.5]
    kFB = [0.5, 0.5]
