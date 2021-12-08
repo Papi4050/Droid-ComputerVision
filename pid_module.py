@@ -13,5 +13,9 @@ def pidControllerLR(errorLR,oldError):
    kLR = [0.5, 0.5]
    kFB = [0.5, 0.5]
    #turn function that calculates the turn value
+   print("kLR[0] is:",type(kLR[0]))
+   print("errorLR is:",type(errorLR))
+   print("kLR[1] is:",type(kLR[0]))
+   print("olderError is:",type(oldError))
    turn = float(kLR[0])* float(errorLR) + float(kLR[1])*[float(errorLR)- float(oldError)]
    return turn
