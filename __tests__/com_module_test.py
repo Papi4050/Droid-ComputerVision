@@ -1,4 +1,8 @@
 import unittest
+import sys
+
+sys.path.insert(0, '../')
+
 import com_module as cm
 
 # A class in which we test functions of our module
