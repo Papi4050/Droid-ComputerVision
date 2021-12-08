@@ -10,7 +10,7 @@
 
 def pidControllerLR(errorLR,oldError):
    #K values for PID tuning (modify these)
-   kLR = [0.05, 0.05]
+   kLR = [0.06, 0.06]
    kFB = [0.5, 0.5]
    #turn function that calculates the turn value
    turn = kLR[0]* errorLR + kLR[1]*(errorLR- oldError)
