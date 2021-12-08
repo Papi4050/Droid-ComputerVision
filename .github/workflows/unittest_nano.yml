@@ -1,0 +1,19 @@
+name: Nano Unit tests for com_module
+
+on:
+  push:
+    branch:
+      - main
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Setup Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Run the unittest script
+        run: python com_module.py -v
