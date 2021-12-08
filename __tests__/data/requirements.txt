@@ -3,3 +3,4 @@
 # platform: osx-arm64
 pyserial==3.4
 opencv-python==4.5.4.58
+face-recognition==1.3.0
