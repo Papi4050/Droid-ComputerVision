@@ -263,11 +263,12 @@ def knownFaceTrack(ser, driveConfig):
                 if turn_input > .25:
                     print("drive left")
                     com_module.sendData(ser,[333,motorInput],3)
+                    print(motorInput)
 
                 elif turn_input < -.25:
                     print("drive right")
                     com_module.sendData(ser,[222,motorInput],3)
-
+                    print(motorInput)
                 else:
                     print("good enough")
                     com_module.sendData(ser,[000,000],3)
