@@ -256,17 +256,17 @@ def knownFaceTrack(ser, driveConfig):
                 turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - driveConfig["right_max"])/w) * cx))
                 val = (abs(turn_input)*20)+20
                 #send the turn value as well as the older error value to the pid module
-                motorInput = pid_module.pidControllerLR(float(val), float(oldError))
+                motorInput = round(pid_module.pidControllerLR(float(val), float(oldError)))
                 #store the old error value for the next pass
                 oldError = val
 
                 if turn_input > .25:
                     print("drive left")
-                    com_module.sendData(ser,[333,motorInput[0]],3)
+                    com_module.sendData(ser,[333,motorInput],3)
 
                 elif turn_input < -.25:
                     print("drive right")
-                    com_module.sendData(ser,[222,motorInput[0]],3)
+                    com_module.sendData(ser,[222,motorInput],3)
 
                 else:
                     print("good enough")
