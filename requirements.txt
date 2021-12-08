@@ -1,7 +1,7 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: osx-arm64
-bzip2=1.0.8=h3422bc3_4
+bzip2==1.0.8=h3422bc3_4
 c-ares=1.18.1=h3422bc3_0
 ca-certificates=2021.10.8=h4653dfc_0
 click=8.0.3=pypi_0
