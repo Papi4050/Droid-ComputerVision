@@ -17,6 +17,5 @@ jobs:
           python-version: 3.7
           cache: 'pip'
       - run: pip install -r requirements.txt
-      - run: pip test
       - name: Run the unittest script
         run: python com_module_test.py -v
