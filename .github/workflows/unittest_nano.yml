@@ -23,8 +23,6 @@ jobs:
         run: python __tests__/droidvision_test.py -v
       - name: live_tracking Test
         run: python __tests__/live_tracking_test.py -v
-      - name: manual_drive Test
-        run: python __tests__/manual_drive_test.py -v
       - name: system_setup Test
         run: python __tests__/system_setup_test.py -v
       - name: train_face Test
