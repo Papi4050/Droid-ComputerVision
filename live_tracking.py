@@ -263,11 +263,11 @@ def knownFaceTrack(ser, driveConfig):
                     com_module.sendData(ser,[222,27],3)
 
                 else:
-                    print("good enough")
+                    print("don't move")
                     com_module.sendData(ser,[000,000],3)
 
             else:
-                print("nofaceeeeeeeeee")
+                print("no face detected")
                 com_module.sendData(ser,[000,000],3)
 
         cv2.imshow('Webcam', img)
