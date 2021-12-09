@@ -213,60 +213,68 @@ def knownFaceTrack(ser, driveConfig):
         # Scale image to .25 optimize processing
         imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
         imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
-
+        
         # Get faces in current frame
         facesCurFrame = face_recognition.face_locations(imgS)
-        # Encode faces in current frame
-        encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
+        
+        if face_recognition.face_locations(imgS):
+            
 
-        for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
-            # Check current faces in frame for similarity
-            matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
-            # Get distance for faces in current frame
-            faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
-            # Will simply select the lowest match
-            matchIndex = np.argmin(faceDis)
+            # Encode faces in current frame
+            encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
-            if matches[matchIndex]:
-                # Match Name and convert to upper
-                name = classNames[matchIndex].upper()
-                # Get location of faces in the frame (top, right, bottom, left)
-                y1, x2, y2, x1 = faceLoc
-                # Multiply by 4 to account for image scaling from above
-                y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
+            for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
+                # Check current faces in frame for similarity
+                matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
+                # Get distance for faces in current frame
+                faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
+                # Will simply select the lowest match
+                matchIndex = np.argmin(faceDis)
 
-                cx, cy, img = findCenter(img, faceLoc)
-                print(name)
+                if matches[matchIndex]:
+                    # Match Name and convert to upper
+                    name = classNames[matchIndex].upper()
+                    # Get location of faces in the frame (top, right, bottom, left)
+                    y1, x2, y2, x1 = faceLoc
+                    # Multiply by 4 to account for image scaling from above
+                    y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
 
-                # Draw identifier on image
-                cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 255, 0), cv2.FILLED)
-                cv2.putText(img, name, (x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 1,
-                            (255, 255, 255), 2)
+                    cx, cy, img = findCenter(img, faceLoc)
+                    print(name)
 
-                h, w, c = img.shape
-                cv2.line(img, (int(w/2), 0), (int(w//2), int(h)), (255, 0, 255), 1)
-                cv2.line(img, (0, int(h//2)), (int(w), int(h)//2),
-                        (255, 0, 255), 1)
+                    # Draw identifier on image
+                    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 255, 0), cv2.FILLED)
+                    cv2.putText(img, name, (x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 1,
+                                (255, 255, 255), 2)
 
-                # Driving calculations
-                distance = estDistance(y1, x2, y2, x1, h, w)
-                turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - driveConfig["right_max"])/w) * cx))
-                val = (abs(turn_input)*20)+20
+                    h, w, c = img.shape
+                    cv2.line(img, (int(w/2), 0), (int(w//2), int(h)), (255, 0, 255), 1)
+                    cv2.line(img, (0, int(h//2)), (int(w), int(h)//2),
+                            (255, 0, 255), 1)
 
-                if turn_input > .25:
-                    print("drive left")
-                    com_module.sendData(ser,[333,27],3)
+                    # Driving calculations
+                    distance = estDistance(y1, x2, y2, x1, h, w)
+                    turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - driveConfig["right_max"])/w) * cx))
+                    val = (abs(turn_input)*20)+20
 
-                elif turn_input < -.25:
-                    print("drive right")
-                    com_module.sendData(ser,[222,27],3)
+                    if turn_input > .25:
+                        print("drive left")
+                        com_module.sendData(ser,[333,27],3)
+
+                    elif turn_input < -.25:
+                        print("drive right")
+                        com_module.sendData(ser,[222,27],3)
+
+                    else:
+                        print("don't move")
+                        com_module.sendData(ser,[000,000],3)
 
                 else:
-                    print("don't move")
+                    print("wrong face detected")
                     com_module.sendData(ser,[000,000],3)
 
-        
+        else:
             print("no face detected")
             com_module.sendData(ser,[000,000],3)
 
