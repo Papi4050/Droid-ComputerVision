@@ -33,9 +33,12 @@ class liveTrackingTest(unittest.TestCase):
             "forward_max": 1,
             "back_max": -1
         }
-        ser = serial.Serial()
-        res = live_tracking.calculateTurnInput(driveConfig, 1, 1, 1)
-        self.assertAlmostEqual(res, ser.write(333027))
+        # This is a right turn!
+        res_right = live_tracking.calculateTurnInput(driveConfig, 1280, 10, "")
+        res_left = live_tracking.calculateTurnInput(driveConfig, 1280, 1270, "")
+        self.assertEqual(res_right, "$222027")
+        self.assertEqual(res_left, "$333027")
+
 
 
     def test_findObjects(self):
