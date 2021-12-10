@@ -9,7 +9,8 @@ import live_tracking
 # A class in which we test functions of our module
 class liveTrackingTest(unittest.TestCase):
 
-    # Test function goes here
+    def test_estDistance():
+        temp = []
 
 
 if __name__ == "__main__":
