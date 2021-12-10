@@ -17,6 +17,33 @@ import com_module
 
 
 def findObjects(img, objectCascade, scaleF=1.1, minN=4):
+    '''
+    This functions finds the desired object in the current frame
+
+    Parameters
+    ----------
+    img : photo frame
+        The image that contains one or more faces
+
+    objectCascade : object
+        This object contains the specific cascade to find the object
+    
+    scaleF : int 
+        Parameter specifying how much the image size is reduced at each 
+        image scale (Default = 1.1)
+
+    minN : int
+        Minimum possible object size. Objects smaller than that are ignored
+        (Default = 4)
+
+    Returns
+    -------
+    imgObjects : image
+        Original frame but with the found objects marked inside a rectangle
+
+    objectsOut : list
+        Contains the detected objects as a list of rectangles
+    '''
     imgObjects = img.copy()
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     objectsOut = []
@@ -33,6 +60,9 @@ def findObjects(img, objectCascade, scaleF=1.1, minN=4):
 # Get all encodings from the faces in the folder
 def findEncodings(images):
     '''
+    This functions finds all the encodings for the knownFaceTrack() from the
+    created Images folder.
+
     Parameters
     ----------
     images : photo files
@@ -54,6 +84,8 @@ def findEncodings(images):
 
 def findCenter(imgObjects, objects):
     '''
+    This function finds the center of the identified face in the given frame.
+
     Parameters
     ----------
     imgObjects : image file
@@ -91,6 +123,10 @@ def findCenter(imgObjects, objects):
 
 def estDistance(y1, x2, y2, x1, h, w):
     '''
+    This function estimates the distance of the identified face in the frame
+    relative to the current camera position. Needs to be calibrated for every
+    camera individually.
+
     Parameters
     ----------
     y1 : int
@@ -134,6 +170,8 @@ def estDistance(y1, x2, y2, x1, h, w):
 
 def findCenterHaar(imgObjects, objects):
     '''
+    This function finds the center of the identified face in the given frame.
+    
     Parameters
     ----------
     imgObjects : image file
@@ -166,6 +204,21 @@ def findCenterHaar(imgObjects, objects):
 
 
 def unknownFaceTrack(ser, cascade_path):
+    '''
+    This function tracks all faces found across the camera feed.
+
+    Parameters
+    ----------
+    ser : string
+        Contains all serial connection information
+
+    cascade_path : string
+        Contains the path to the haar cascade
+
+    objects : list
+        A list of tuples of found face locations in css (top, right, bottom,
+        left) order
+    '''
 
     cap = system_setup.configurator()
 
@@ -189,6 +242,22 @@ def unknownFaceTrack(ser, cascade_path):
 
 
 def knownFaceTrack(ser, driveConfig):
+    '''
+    This function tracks only known faces found across the camera feed.
+
+    Parameters
+    ----------
+    ser : string
+        Contains all serial connection information
+
+    driveConfig : string
+        Contains all drive configuration (max input values) information
+
+    objects : list
+        A list of tuples of found face locations in css (top, right, bottom,
+        left) order
+    '''
+
     path = 'Images'
     images = []
     classNames = []
