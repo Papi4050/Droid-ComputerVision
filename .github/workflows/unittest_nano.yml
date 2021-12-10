@@ -1,0 +1,24 @@
+name: Nano Unit tests for com_module
+
+on:
+  push:
+    branch:
+      - main
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Setup Python 3.6.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6.9'
+          cache: 'pip'
+      - run: pip install -r __tests__/data/requirements.txt
+      - name: com_module Test
+        run: python __tests__/com_module_test.py -v
+      - name: live_tracking Test
+        run: python __tests__/live_tracking_test.py -v
+
