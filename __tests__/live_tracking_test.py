@@ -26,6 +26,7 @@ class liveTrackingTest(unittest.TestCase):
         res = live_tracking.estDistance(y1, x2, y2, x1, h, w)
         self.assertAlmostEqual(res, 22.55, 3)
 
+
     def test_calculateTurnInput(self):
         driveConfig = {
             "left_max":-1,
@@ -38,7 +39,6 @@ class liveTrackingTest(unittest.TestCase):
         res_left = live_tracking.calculateTurnInput(driveConfig, 1280, 1270, "")
         self.assertEqual(res_right, "$222027")
         self.assertEqual(res_left, "$333027")
-
 
 
     def test_findObjects(self):
