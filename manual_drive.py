@@ -12,6 +12,8 @@ This will be used in case a manual mode is required to control the robot
 
 def drive_controller_on(key, ser):
     '''
+    This functions handles all the driving commands
+
     Parameters
     ----------
     Key : 
@@ -43,11 +45,6 @@ def drive_controller_on(key, ser):
             com_module.sendData(ser,[333,333],3)
     except AttributeError:
         print('special key {0} pressed'.format(key))
-
-    # This function only needs to be sent once
-    # TODO: Determine proper location for this
-    #ser = com_module.initSerialConnection("/dev/ttyACM0", 115200)
-
 
     # This is the command to send data via the serial terminal
     # 'ser' needs to set to provide connection info
