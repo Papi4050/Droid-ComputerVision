@@ -1,4 +1,4 @@
-name: Nano Unit tests for com_module
+name: Jetson Nano Unit tests
 
 on:
   push:

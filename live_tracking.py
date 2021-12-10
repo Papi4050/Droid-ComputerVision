@@ -240,6 +240,38 @@ def unknownFaceTrack(ser, cascade_path):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+def calculateTurnInput(driveConfig, width, cx, ser):
+    '''
+    This function calculated what serial commands to send to Arduino for turning
+
+    Parameters
+    ----------
+    driveConfig : string
+        Contains all drive configuration (max input values) information
+
+    width : float
+        Width of camera screen
+
+    cx : float
+        x location of face center on camera screen
+    '''
+
+    turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - \
+        driveConfig["right_max"])/width) * cx))
+    
+
+    if turn_input > .25:
+        print("drive left")
+        return com_module.sendData(ser,[333,27],3)
+
+    elif turn_input < -.25:
+        print("drive right")
+        return com_module.sendData(ser,[222,27],3)
+
+    else:
+        print("good enough")
+        return com_module.sendData(ser,[000,000],3)
+
 
 def knownFaceTrack(ser, driveConfig):
     '''
@@ -320,20 +352,7 @@ def knownFaceTrack(ser, driveConfig):
 
                 # Driving calculations
                 distance = estDistance(y1, x2, y2, x1, h, w)
-                turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - driveConfig["right_max"])/w) * cx))
-                val = (abs(turn_input)*20)+20
-
-                if turn_input > .25:
-                    print("drive left")
-                    com_module.sendData(ser,[333,27],3)
-
-                elif turn_input < -.25:
-                    print("drive right")
-                    com_module.sendData(ser,[222,27],3)
-
-                else:
-                    print("good enough")
-                    com_module.sendData(ser,[000,000],3)
+                calculateTurnInput(driveConfig, w, cx, ser)
 
             else:
                 print("nofaceeeeeeeeee")
