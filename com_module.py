@@ -8,6 +8,8 @@ import serial
 
 def initSerialConnection(portNo, baudRate):
     '''
+    This functions initializes the serial connection
+
     Parameters
     ----------
     portNo : string
@@ -31,6 +33,8 @@ def initSerialConnection(portNo, baudRate):
 
 def sendData(se, data, digits):
     '''
+    This function formats and sends the data via serial connection
+
     Parameters
     ----------
     se : string
