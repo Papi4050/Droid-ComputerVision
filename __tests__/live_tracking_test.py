@@ -9,9 +9,6 @@ import live_tracking
 # A class in which we test functions of our module
 class liveTrackingTest(unittest.TestCase):
 
-    def setUp(self) -> None:
-        return super().setUp()
-
     def test_estDistance(self):
         x1 = 10
         x2 = 210
