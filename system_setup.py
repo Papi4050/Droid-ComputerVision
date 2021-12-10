@@ -4,6 +4,8 @@ import platform
 
 def running_on_jetson_nano():
     '''
+    This function identifies if the code is running on the Jetson Nano
+
     Returns
     -------
     platform: boolean
@@ -20,10 +22,38 @@ def running_on_jetson_nano():
 def get_jetson_gstreamer_source(capture_width=640, capture_height=480,
                                 display_width=640, display_height=480,
                                 framerate=30, flip_method=0):
-    """
-    Return an OpenCV-compatible video source description that uses gstreamer
-    to capture video from the camera on a Jetson Nano.
-    """
+
+    '''
+    This function creates an OpenCV-compatible video source description that 
+    uses gstreamer to capture video from the camera on a Jetson Nano.
+
+    Parameters
+    ----------
+    capture_width : int
+        Sets webcam capture width
+
+    capture_height : int
+        Sets webcam capture height
+    
+    display_width : int
+        Sets display width
+
+    display_heigh : int
+        Sets display height
+
+    framerate : int
+        Configures the system framerate
+
+    flip_method : int
+        Allows the image to be flipped horizontally.
+        0 = Standard orientation, 1 = Flipped
+
+    Returns
+    -------
+    '' : string
+        G-streamer configuration based on input parameters
+    '''
+
     return (
             f'nvarguscamerasrc ! video/x-raw(memory:NVMM), ' +
             f'width=(int){capture_width}, height=(int){capture_height}, ' +
@@ -36,6 +66,15 @@ def get_jetson_gstreamer_source(capture_width=640, capture_height=480,
 
 
 def configurator():
+    '''
+    This function configures the system based on the hardware architecture
+    
+    Returns
+    -------
+    cap : overloaded member function
+        Configured function to open video file or a capturing device or a IP video stream for 
+        video capturing with API Preference
+    '''
     # Initialize webcam
     if running_on_jetson_nano():
         # Accessing the camera with OpenCV on a Jetson Nano requires gstreamer

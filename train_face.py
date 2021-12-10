@@ -19,6 +19,9 @@ import face_recognition as fr
 
 def createImageDir(path):
     '''
+    This function creates the necessary local directory for the known face
+    tracking functionality
+
     Parameters
     ----------
     path : string
@@ -33,6 +36,8 @@ def createImageDir(path):
 
 def captureFace(path, name):
     '''
+    This functions executes the image capturing process
+
     Parameters
     ----------
     path : string
@@ -103,6 +108,8 @@ def captureFace(path, name):
 
 def checkFaceInImage(path, name, image):
     '''
+    This functions checks if a face is present in the current frame
+
     Parameters
     ----------
     path : string
