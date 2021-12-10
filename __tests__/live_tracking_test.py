@@ -9,6 +9,11 @@ import serial
 
 # A class in which we test functions of our module
 class liveTrackingTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.img = live_tracking.face_recognition.load_image_file("./__tests__/resources/Luke.jpeg")
+        cls.faceCascade = live_tracking.cv2.CascadeClassifier("./__tests__/resources/haarcascade_frontalface_default.xml")
+
 
     def test_estDistance(self):
         x1 = 10
@@ -31,6 +36,26 @@ class liveTrackingTest(unittest.TestCase):
         ser = serial.Serial()
         res = live_tracking.calculateTurnInput(driveConfig, 1, 1, 1)
         self.assertAlmostEqual(res, ser.write(333027))
+
+
+    def test_findObjects(self):
+        imgObjects, objectsOut = live_tracking.findObjects(self.img, self.faceCascade)
+        self.assertIsNot(imgObjects, self.img)
+        self.assertIsNotNone(objectsOut)
+
+    
+    def test_findEncodings(self):
+        images = []
+        images.append(self.img)
+        encodeList = live_tracking.findEncodings(images)
+        self.assertIsNotNone(encodeList)
+
+
+    def test_findCenter(self):
+        faceObjects = [330, 178, 208, 208]
+        cx, cy, imgObjects = live_tracking.findCenter(self.img, faceObjects)
+        self.assertNotEqual(cx, -1)
+        self.assertNotEqual(cy, -1)
 
 
 if __name__ == "__main__":
