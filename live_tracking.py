@@ -240,7 +240,7 @@ def unknownFaceTrack(ser, cascade_path):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-def calculateTurnInput(driveConfig, width, cx):
+def calculateTurnInput(driveConfig, width, cx, ser):
     '''
     This function calculated what serial commands to send to Arduino for turning
 
@@ -352,7 +352,7 @@ def knownFaceTrack(ser, driveConfig):
 
                 # Driving calculations
                 distance = estDistance(y1, x2, y2, x1, h, w)
-                calculateTurnInput(driveConfig, w, cx)
+                calculateTurnInput(driveConfig, w, cx, ser)
 
             else:
                 print("nofaceeeeeeeeee")
