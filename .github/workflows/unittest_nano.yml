@@ -19,11 +19,6 @@ jobs:
       - run: pip install -r __tests__/data/requirements.txt
       - name: com_module Test
         run: python __tests__/com_module_test.py -v
-      - name: droidvision Test
-        run: python __tests__/droidvision_test.py -v
       - name: live_tracking Test
         run: python __tests__/live_tracking_test.py -v
-      - name: system_setup Test
-        run: python __tests__/system_setup_test.py -v
-      - name: train_face Test
-        run: python __tests__/train_face_test.py -v
+
