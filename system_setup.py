@@ -24,7 +24,7 @@ def get_jetson_gstreamer_source(capture_width=640, capture_height=480,
                                 framerate=30, flip_method=0):
 
     '''
-    This function creates an OpenCV-compatible video source description that 
+    This function creates an OpenCV-compatible video source description that
     uses gstreamer to capture video from the camera on a Jetson Nano.
 
     Parameters
@@ -34,7 +34,7 @@ def get_jetson_gstreamer_source(capture_width=640, capture_height=480,
 
     capture_height : int
         Sets webcam capture height
-    
+
     display_width : int
         Sets display width
 
@@ -68,12 +68,12 @@ def get_jetson_gstreamer_source(capture_width=640, capture_height=480,
 def configurator():
     '''
     This function configures the system based on the hardware architecture
-    
+
     Returns
     -------
     cap : overloaded member function
-        Configured function to open video file or a capturing device or a IP video stream for 
-        video capturing with API Preference
+        Configured function to open video file or a capturing device or a
+        IP video stream for video capturing with API Preference
     '''
     # Initialize webcam
     if running_on_jetson_nano():
@@ -83,7 +83,7 @@ def configurator():
                                cv2.CAP_GSTREAMER)
         print('Jetson Nano detected!')
     else:
-        # Accessing the camera with OpenCV on a laptop just requires passing 
+        # Accessing the camera with OpenCV on a laptop just requires passing
         # in the number of the webcam (usually 0)
         # Note: You can pass in a filename instead if you want to process a
         # video file instead of a live camera stream
