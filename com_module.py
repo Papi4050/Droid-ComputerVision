@@ -59,8 +59,6 @@ def sendData(se, data, digits):
         print(myString)
     except:
         print("Data Transmission failed!")
-        exit_code = 0
-        sys.exit(exit_code)
 
     return myString
 
