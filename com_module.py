@@ -29,10 +29,10 @@ def initSerialConnection(portNo, baudRate):
         ser = serial.Serial(portNo, baudRate, timeout=100)
         print("Device Connected")
         return ser
-    except NotImplementedError:
+    except:
         print("Not connected")
         # changes exit code and exits
-        exit_code = 1
+        exit_code = 0
         sys.exit(exit_code)
 
 
@@ -57,9 +57,9 @@ def sendData(se, data, digits):
     try:
         se.write(myString.encode())
         print(myString)
-    except NotImplementedError:
+    except:
         print("Data Transmission failed!")
-        exit_code = 1
+        exit_code = 0
         sys.exit(exit_code)
 
     return myString
