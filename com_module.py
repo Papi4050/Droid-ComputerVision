@@ -31,8 +31,8 @@ def initSerialConnection(portNo, baudRate):
     except NotConnected:
         print("Not connected")
         # changes exit code and exits
-        # exit_code = 1
-        # sys.exit(exit_code)
+        exit_code = 1
+        sys.exit(exit_code)
 
 
 def sendData(se, data, digits):
