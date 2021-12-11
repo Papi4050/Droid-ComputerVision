@@ -1,11 +1,11 @@
 import unittest
 import os
 import sys
-import live_tracking
 import serial
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import live_tracking
 
 # A class in which we test functions of our module
 class liveTrackingTest(unittest.TestCase):

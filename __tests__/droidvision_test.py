@@ -1,10 +1,10 @@
 import unittest
 import os
 import sys
-import droidvision
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import droidvision
 
 # A class in which we test functions of our module
 class droidvisionTest(unittest.TestCase):
