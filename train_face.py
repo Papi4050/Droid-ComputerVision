@@ -33,6 +33,8 @@ def createImageDir(path):
     else:
         print("Dir already exist")
 
+    return 0
+
 
 def captureFace(path, name):
     '''
