@@ -5,7 +5,7 @@ to provide communication functionality.
 This includes methods to establish the connection and send data
 '''
 import serial
-import system
+import sys
 
 
 def initSerialConnection(portNo, baudRate):
