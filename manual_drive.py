@@ -17,10 +17,12 @@ def drive_controller_on(key, ser):
 
     Parameters
     ----------
-    key : listens to the key being pressed and passes along that key
+    Key : float
+        Float value corresponding to the key pressed to control drive controller
 
     ser : serial information for when the com_module is called in order
           to send info to the arduino
+
 
     Returns
     -------
