@@ -102,9 +102,9 @@ def main():
     cascadePath = config_args[1]
     portNo = config_args[2]
     baudRate = config_args[3]
-    driveConfig = {"left_max":config_args[4], "right_max":config_args[5],
-                   "forward_max":config_args[6], "back_max":config_args[7]}
-    
+    driveConfig = {"left_max": config_args[4], "right_max": config_args[5],
+                   "forward_max": config_args[6], "back_max": config_args[7]}
+
     # Connect to serial communication
     ser = com_module.initSerialConnection(portNo, baudRate)
 

@@ -1,6 +1,8 @@
 import unittest
+
 import os, sys
 import platform
+
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -15,6 +17,7 @@ class systemSetupTest(unittest.TestCase):
 
         res = system_setup.running_on_jetson_nano()
         self.assertEquals(res, platform.machine())
+
 
 if __name__ == "__main__":
     unittest.main()

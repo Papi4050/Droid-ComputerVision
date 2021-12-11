@@ -44,7 +44,7 @@ def captureFace(path, name):
     ----------
     path : string
         File path to the images folder
-    
+
     name : string
         Contains the name of the person who is being saved
     '''
@@ -80,15 +80,14 @@ def captureFace(path, name):
     else:
         uniqueID = int(maxVal[-1]) + 1
 
-    
     faceDetected = False
     while not faceDetected:
         # Prepare for taking the photo
-        for countdown in range(5,0,-1):
+        for countdown in range(5, 0, -1):
             print(f'Image will be taking in {countdown} seconds...')
             time.sleep(1)
-        
-        #Take the photo
+
+        # Take the photo
         success, image = cap.read()
         print("Checking if a face was detected within image")
 
@@ -101,11 +100,8 @@ def captureFace(path, name):
             print("Face not detected in image, another photo will be taken")
             time.sleep(2)
 
-
     final_path = f'{path}/{name}-{uniqueID}.png'
     cv2.imwrite(final_path, image)
-    
-    
 
 
 def checkFaceInImage(path, name, image):
@@ -116,11 +112,11 @@ def checkFaceInImage(path, name, image):
     ----------
     path : string
         File path to the images folder
-    
+
     name : string
         Contains the name of the person who is being saved
     '''
-   
+
     try:
         fr.face_encodings(image)[0]
         print("Successful photo with face captured!")
@@ -128,14 +124,15 @@ def checkFaceInImage(path, name, image):
     except IndexError:
         print("Face not detected in image, another photo will be taken")
         captureFace(path, name)
- 
+
 
 def main():
     path = './Images'
     name = 'JohnDoe'
-    
+
     createImageDir(path)
     captureFace(path, name)
 
+
 if __name__ == "__main__":
-    main()  
+    main()

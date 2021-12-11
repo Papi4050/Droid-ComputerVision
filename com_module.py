@@ -4,7 +4,9 @@ to provide communication functionality.
 
 This includes methods to establish the connection and send data
 '''
-import serial 
+import serial
+import sys
+
 
 def initSerialConnection(portNo, baudRate):
     '''
@@ -24,11 +26,14 @@ def initSerialConnection(portNo, baudRate):
         Connection information
     '''
     try:
-        ser = serial.Serial(portNo,baudRate,timeout=100)
+        ser = serial.Serial(portNo, baudRate, timeout=100)
         print("Device Connected")
         return ser
     except:
         print("Not connected")
+        # changes exit code and exits
+        exit_code = 0
+        sys.exit(exit_code)
 
 
 def sendData(se, data, digits):
@@ -39,9 +44,9 @@ def sendData(se, data, digits):
     ----------
     se : string
         Provides the local port information for the sending device
-    
+
     data : string
-        Contains the data which will be sent 
+        Contains the data which will be sent
 
     digits : int
         Determines transfer length
@@ -54,7 +59,7 @@ def sendData(se, data, digits):
         print(myString)
     except:
         print("Data Transmission failed!")
-    
+
     return myString
 
 

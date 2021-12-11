@@ -1,5 +1,6 @@
 import unittest
-import os, sys
+import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -11,6 +12,7 @@ class ComModuleTest(unittest.TestCase):
     def test_sendData_string(self):
         myString = cm.sendData("", "555", 3)
         self.assertEqual(myString, '$005005005')
+
 
 if __name__ == "__main__":
     unittest.main()
