@@ -16,8 +16,9 @@ def drive_controller_on(key, ser):
 
     Parameters
     ----------
-    Key : 
-
+    Key : float
+        Float value corresponding to the key pressed to control drive controller
+        
     Returns
     -------
     driveValue : int
