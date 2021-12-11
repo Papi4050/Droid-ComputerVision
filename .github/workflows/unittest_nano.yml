@@ -18,7 +18,12 @@ jobs:
           cache: 'pip'
       - run: pip install -r __tests__/data/requirements.txt
       - name: com_module Test
-        run: python __tests__/com_module_test.py -v
+        run: python3 __tests__/com_module_test.py -v
       - name: live_tracking Test
-        run: python __tests__/live_tracking_test.py -v
-
+        run: python3 __tests__/live_tracking_test.py -v
+      - name: manual_drive Test
+        run: python3 __tests__/manual_drive_test.py -v
+      - name: system_setup Test
+        run: python3 __tests__/system_setup_test.py -v
+      - name: train_face Test
+        run: python3 __tests__/train_face_test.py -v        
