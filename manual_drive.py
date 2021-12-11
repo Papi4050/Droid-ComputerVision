@@ -18,7 +18,7 @@ def drive_controller_on(key, ser):
     Parameters
     ----------
     key : listens to the key being pressed and passes along that key
-    
+
     ser : serial information for when the com_module is called in order
           to send info to the arduino
 
@@ -26,24 +26,24 @@ def drive_controller_on(key, ser):
     -------
     None
     '''
-    #this listens to see if keys are pressed
+    # this listens to see if keys are pressed
     try:
         # if w key is pressed
         if key.vk == 119:
             print("drive forward")
-            com_module.sendData(ser,[111,111],3)
+            com_module.sendData(ser, [111, 111], 3)
         # if a key is pressed
         if key.vk == 97:
             print("drive left")
-            com_module.sendData(ser,[222,222],3)
+            com_module.sendData(ser, [222, 222], 3)
         # if s key is pressed
         if key.vk == 115:
             print("drive backward")
-            com_module.sendData(ser,[444,444],3)
-        if key.vk == 100:
+            com_module.sendData(ser, [444, 444], 3)
         # if d key is pressed
+        if key.vk == 100:
             print("drive right")
-            com_module.sendData(ser,[333,333],3)
+            com_module.sendData(ser, [333, 333], 3)
     # if special key is pressed such as ctrl or alt
     except AttributeError:
         print('special key {0} pressed'.format(key))
@@ -52,7 +52,7 @@ def drive_controller_on(key, ser):
     # 'ser' needs to set to provide connection info
     # 'data' is the information you are trying to send via serial
     # 'digits is transfer length
-    #com_module.sendData(ser, data, digits)
+    # com_module.sendData(ser, data, digits)
     return 0
 
 
@@ -64,7 +64,7 @@ def drive_controller_off(key, ser):
     Parameters
     ----------
     key : listens to the key being pressed and passes along that key
-    
+
     ser : serial information for when the com_module is called in order
           to send info to the arduino
 
@@ -82,9 +82,9 @@ def main(ser):
     '''
     This functions starts the keyboard listender and passes keys to
     drive_controller_on and drive_controller_off
-    
+
     Parameters
-    ----------  
+    ----------
     ser : serial information for when the com_module is called in order
           to send info to the arduino
 
@@ -92,13 +92,16 @@ def main(ser):
     -------
     None
     '''
-    with keyboard.Listener(on_press=lambda event: drive_controller_on(event,ser), on_release=lambda event:drive_controller_off(event, ser)) as listener:
+    with keyboard.Listener(on_press=lambda event: drive_controller_on
+                           (event, ser),
+                           on_release=lambda event:
+                           drive_controller_off(event, ser)) as listener:
         listener.join()
 
 # This statement starts the main function if this script is run from
 # the terminal
+
+
 if __name__ == "__main__":
     ser = com_module.initSerialConnection("/dev/ttyACM2", 2400)
-    # TODO: Is the first variable actually needed? 
-    #drive_controller('',ser)  
     main(ser)
