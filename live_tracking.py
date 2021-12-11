@@ -27,9 +27,9 @@ def findObjects(img, objectCascade, scaleF=1.1, minN=4):
 
     objectCascade : object
         This object contains the specific cascade to find the object
-    
-    scaleF : int 
-        Parameter specifying how much the image size is reduced at each 
+
+    scaleF : int
+        Parameter specifying how much the image size is reduced at each
         image scale (Default = 1.1)
 
     minN : int
@@ -48,11 +48,11 @@ def findObjects(img, objectCascade, scaleF=1.1, minN=4):
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     objectsOut = []
     objects = objectCascade.detectMultiScale(imgGray, scaleF, minN)
-    for (x,y,w,h) in objects:
-        cv2.rectangle(imgObjects,(x,y),(x+w,y+h),(255,0,255),2)
-        objectsOut.append([[x,y,w,h],w*h])
+    for (x, y, w, h) in objects:
+        cv2.rectangle(imgObjects, (x, y), (x+w, y+h), (255, 0, 255), 2)
+        objectsOut.append([[x, y, w, h], w*h])
 
-    objectsOut = sorted(objectsOut, key = lambda x:x[1], reverse=True)
+    objectsOut = sorted(objectsOut, key=lambda x: x[1], reverse=True)
 
     return imgObjects, objectsOut
 
@@ -131,7 +131,7 @@ def estDistance(y1, x2, y2, x1, h, w):
     ----------
     y1 : int
         Top point of face
-    
+
     x2 : int
         Right point of face
 
@@ -155,12 +155,12 @@ def estDistance(y1, x2, y2, x1, h, w):
     orig_size = h*w
 
     y_length = y2 - y1
-    x_length = x2 - x1 
+    x_length = x2 - x1
 
     area = y_length * x_length
     area_uncovered = orig_size - area
 
-    # 22 = distance measured in inches during trial 
+    # 22 = distance measured in inches during trial
     # 860096 = pixels covered at this specific distance
     # This approach is chosen for now to scale distance
     # IS NOT ROBUST but works
@@ -168,10 +168,11 @@ def estDistance(y1, x2, y2, x1, h, w):
 
     return dist
 
+
 def findCenterHaar(imgObjects, objects):
     '''
     This function finds the center of the identified face in the given frame.
-    
+
     Parameters
     ----------
     imgObjects : image file
@@ -191,15 +192,17 @@ def findCenterHaar(imgObjects, objects):
         Current frame seen by live-feed with known face including off-center
         information
     '''
-    cx,cy = -1, -1
+    cx, cy = -1, -1
     if len(objects) != 0:
-        x,y,w,h = objects[0][0]
+        x, y, w, h = objects[0][0]
         cx = x + w/2
         cy = y + h/2
-        cv2.circle(imgObjects, (int(cx), int(cy)), 2, (0,255,0), cv2.FILLED)
+        cv2.circle(imgObjects, (int(cx), int(cy)), 2, (0, 255, 0), cv2.FILLED)
         ih, iw, ic = imgObjects.shape
-        cv2.line(imgObjects, (int(iw//2), int(cy)), (int(cx),int(cy)), (0,255,0), 1)
-        cv2.line(imgObjects, (int(cx), int(ih//2)), (int(cx),int(cy)), (0,255,0), 1)
+        cv2.line(imgObjects, (int(iw//2), int(cy)), (int(cx), int(cy)),
+                 (0, 255, 0), 1)
+        cv2.line(imgObjects, (int(cx), int(ih//2)), (int(cx), int(cy)),
+                 (0, 255, 0), 1)
     return cx, cy, imgObjects
 
 
@@ -226,23 +229,25 @@ def unknownFaceTrack(ser, cascade_path):
 
     while True:
         success, img = cap.read()
-        img = cv2.resize(img, (0,0), None, 0.3,0.3)
+        img = cv2.resize(img, (0, 0), None, 0.3, 0.3)
         imgObjects, objects = findObjects(img, faceCascade, 1.1, 5)
         cx, cy, imgObjects = findCenterHaar(imgObjects, objects)
 
-        h,w,c = imgObjects.shape
-        cv2.line(imgObjects, (int(w/2),0), (int(w//2),int(h)), (255,0,255), 1)
-        cv2.line(imgObjects, (0,int(h//2)), (int(w),int(h)//2), (255,0,255), 1)
+        h, w, c = imgObjects.shape
+        cv2.line(imgObjects, (int(w/2), 0), (int(w//2), int(h)),
+                 (255, 0, 255), 1)
+        cv2.line(imgObjects, (0, int(h//2)), (int(w), int(h)//2),
+                 (255, 0, 255), 1)
 
-        
-        img = cv2.resize(imgObjects, (0,0), None, 3,3)
+        img = cv2.resize(imgObjects, (0, 0), None, 3, 3)
         cv2.imshow("Image", img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+
 def calculateTurnInput(driveConfig, width, cx, ser):
     '''
-    This function calculated what serial commands to send to Arduino for turning
+    Function calculates what serial commands to send to Arduino for turning
 
     Parameters
     ----------
@@ -256,21 +261,21 @@ def calculateTurnInput(driveConfig, width, cx, ser):
         x location of face center on camera screen
     '''
 
-    turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] - \
-        driveConfig["right_max"])/width) * cx))
-    
+    turn_input = (driveConfig["left_max"] + ((abs(driveConfig["left_max"] -
+                                                  driveConfig["right_max"])
+                                              / width) * cx))
 
     if turn_input > .25:
         print("drive left")
-        return com_module.sendData(ser,[333,27],3)
+        return com_module.sendData(ser, [333, 27], 3)
 
     elif turn_input < -.25:
         print("drive right")
-        return com_module.sendData(ser,[222,27],3)
+        return com_module.sendData(ser, [222, 27], 3)
 
     else:
         print("good enough")
-        return com_module.sendData(ser,[000,000],3)
+        return com_module.sendData(ser, [000, 000], 3)
 
 
 def knownFaceTrack(ser, driveConfig):
@@ -318,13 +323,16 @@ def knownFaceTrack(ser, driveConfig):
         # Get faces in current frame
         facesCurFrame = face_recognition.face_locations(imgS)
         # Encode faces in current frame
-        encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
+        encodesCurFrame = face_recognition.face_encodings(imgS,
+                                                          facesCurFrame)
 
         for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
             # Check current faces in frame for similarity
-            matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
+            matches = face_recognition.compare_faces(encodeListKnown,
+                                                     encodeFace)
             # Get distance for faces in current frame
-            faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
+            faceDis = face_recognition.face_distance(encodeListKnown,
+                                                     encodeFace)
             # Will simply select the lowest match
             matchIndex = np.argmin(faceDis)
 
@@ -341,14 +349,17 @@ def knownFaceTrack(ser, driveConfig):
 
                 # Draw identifier on image
                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 255, 0), cv2.FILLED)
-                cv2.putText(img, name, (x1+6, y2-6), cv2.FONT_HERSHEY_COMPLEX, 1,
+                cv2.rectangle(img, (x1, y2-35), (x2, y2), (0, 255, 0),
+                              cv2.FILLED)
+                cv2.putText(img, name, (x1+6, y2-6),
+                            cv2.FONT_HERSHEY_COMPLEX, 1,
                             (255, 255, 255), 2)
 
                 h, w, c = img.shape
-                cv2.line(img, (int(w/2), 0), (int(w//2), int(h)), (255, 0, 255), 1)
+                cv2.line(img, (int(w/2), 0), (int(w//2), int(h)),
+                         (255, 0, 255), 1)
                 cv2.line(img, (0, int(h//2)), (int(w), int(h)//2),
-                        (255, 0, 255), 1)
+                                              (255, 0, 255), 1)
 
                 # Driving calculations
                 distance = estDistance(y1, x2, y2, x1, h, w)
@@ -356,18 +367,19 @@ def knownFaceTrack(ser, driveConfig):
 
             else:
                 print("nofaceeeeeeeeee")
-                com_module.sendData(ser,[000,000],3)
+                com_module.sendData(ser, [000, 000], 3)
 
         cv2.imshow('Webcam', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+
 if __name__ == "__main__":
     ser = com_module.initSerialConnection("/dev/ttyACM2", 19200)
     driveConfig = {
-        "left_max":-30,
+        "left_max": -30,
         "right_max": 30,
         "forward_max": 30,
         "back_max": -30
     }
-    knownFaceTrack(ser, driveConfig) 
+    knownFaceTrack(ser, driveConfig)
